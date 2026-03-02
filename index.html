@@ -2263,16 +2263,18 @@
             });
             
             // Stocker les discrepancies par section comme JSON string
+            // Les champs sont: photoName, photoData, description, cause, action, pilote, deadline
             const discrepanciesNested = sectionOrder.map(section => {
                 const sectionDiscrepancies = discrepancies[section] || [];
                 return sectionDiscrepancies
                     .filter(d => d !== undefined && d !== null)
                     .map(d => ({
-                        section: String(d.section || ''),
-                        question: String(d.question || ''),
-                        response: String(d.response || ''),
+                        photoName: String(d.photoName || ''),
+                        photoData: String(d.photoData || ''),
+                        description: String(d.description || ''),
+                        cause: String(d.cause || ''),
                         action: String(d.action || ''),
-                        responsible: String(d.responsible || ''),
+                        pilote: String(d.pilote || ''),
                         deadline: String(d.deadline || '')
                     }));
             });
