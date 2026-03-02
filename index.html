@@ -1,0 +1,3527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrière-plan Couleur</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #002857;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            padding-top: 20px;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            font-size: 36px;
+            position: relative;
+            z-index: 10;
+        }
+        .category-summary-bar {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(130px, 1fr));
+            gap: 10px;
+            flex: 1;
+            min-width: 260px;
+        }
+        .category-chip {
+            background-color: #ffffff;
+            color: #002857;
+            border: 2px solid #FF7514;
+            border-radius: 6px;
+            padding: 8px 12px 8px 20px;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+            text-align: center;
+            position: relative;
+        }
+        .category-chip::before {
+            content: '';
+            position: absolute;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 18px;
+            background-color: #87CEEB;
+            border-radius: 2px;
+            pointer-events: none;
+        }
+        .date {
+            color: #FF7514;
+            background-color: rgba(0, 40, 87, 0.3);
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+        }
+        .focus-alert {
+            position: fixed;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            display: none;
+            animation: focusBlink 1s infinite;
+            align-items: center;
+            gap: 0;
+        }
+        .focus-icon {
+            background-color: #ffffff;
+            color: #c62828;
+            padding: 10px 12px;
+            border: 1px solid #c62828;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            font-size: 18px;
+            line-height: 1;
+        }
+        .focus-text {
+            background-color: #c62828;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 0 8px 8px 0;
+            border: 1px solid #c62828;
+        }
+        .focus-slogan-banner {
+            background-color: transparent;
+            color: #FF7514;
+            padding: 8px 0;
+            border-radius: 0;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            max-width: 520px;
+            display: none;
+            margin-top: 10px;
+            margin-left: auto;
+            text-align: right;
+        }
+        @keyframes focusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        select {
+            background-color: #ffffff;
+            color: #002857;
+            border: 2px solid #FF7514;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            margin-left: 0;
+            margin-right: 20px;
+            display: block;
+        }
+        select:hover {
+            background-color: #f5f5f5;
+        }
+        select:disabled {
+            background-color: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+        }
+        input[type="text"] {
+            background-color: #ffffff;
+            color: #002857;
+            border: 2px solid #FF7514;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            border-radius: 5px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        input[type="text"].active {
+            display: block;
+        }
+        #category {
+            display: none;
+        }
+        #category.active {
+            display: block;
+        }
+        .button-container {
+            position: fixed;
+            left: 20px;
+            top: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 175px;
+        }
+        .nav-button {
+            background-color: #ffffff;
+            color: #002857;
+            border: 2px solid #002857;
+            border-left: 4px solid #002857;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-family: Arial, sans-serif;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            text-align: left;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0, 40, 87, 0.15);
+        }
+        .nav-button:hover {
+            background-color: #e8f0fe;
+            border-color: #FF7514;
+            border-left-color: #FF7514;
+            transform: translateX(3px);
+        }
+        .nav-button.active {
+            background-color: #FF7514;
+            color: white;
+            border-color: #FF7514;
+            border-left-color: #FF7514;
+            box-shadow: 0 4px 12px rgba(255, 117, 20, 0.35);
+        }
+        .button-separator {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            margin: 4px 0;
+        }
+        .logout-button {
+            background-color: #c62828;
+            color: #ffffff;
+            border-color: #c62828;
+            border-left-color: #c62828;
+        }
+        .logout-button:hover {
+            background-color: #b71c1c;
+            border-color: #b71c1c;
+            border-left-color: #b71c1c;
+        }
+        .delete-data-button {
+            background-color: #ffffff;
+            color: #002857;
+            border-color: #002857;
+            border-left-color: #002857;
+        }
+        .delete-data-button:hover {
+            background-color: #f0f0f0;
+            border-color: #FF7514;
+            border-left-color: #FF7514;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .dropdowns-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .questions-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            display: none;
+        }
+        .questions-container.active {
+            display: block;
+        }
+        .question-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-left: 4px solid #FF7514;
+            border-radius: 3px;
+        }
+        .question-text {
+            color: #002857;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .response-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .response-btn {
+            padding: 8px 15px;
+            border: 2px solid #002857;
+            background-color: white;
+            color: #002857;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .response-btn.ok { border-color: #2e7d32; color: #2e7d32; }
+        .response-btn.nok { border-color: #c62828; color: #c62828; }
+        .response-btn.na { border-color: #ff8f00; color: #ff8f00; }
+        .response-btn.ok.selected { background-color: #2e7d32; color: white; border-color: #2e7d32; }
+        .response-btn.nok.selected { background-color: #c62828; color: white; border-color: #c62828; }
+        .response-btn.na.selected { background-color: #ff8f00; color: white; border-color: #ff8f00; }
+        .response-btn:hover {
+            background-color: #f0f0f0;
+        }
+        .response-btn.selected {
+            background-color: #FF7514;
+            color: white;
+            border-color: #FF7514;
+        }
+        .ecart-box {
+            margin-top: 12px;
+            padding: 12px;
+            border: 1px solid #c62828;
+            border-radius: 6px;
+            background-color: #fff5f5;
+            display: none;
+        }
+        .ecart-box.active {
+            display: block;
+        }
+        .ecart-title {
+            color: #c62828;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .ecart-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .ecart-grid label {
+            color: #002857;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .ecart-grid input[type="text"],
+        .ecart-grid input[type="date"],
+        .ecart-grid textarea,
+        .ecart-grid input[type="file"] {
+            width: 100%;
+            box-sizing: border-box;
+            border: 2px solid #FF7514;
+            border-radius: 5px;
+            padding: 8px 10px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            color: #002857;
+            background-color: #ffffff;
+            margin: 0;
+            display: block;
+        }
+        .ecart-grid textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+        .ecart-photo-preview {
+            margin-top: 8px;
+            max-width: 180px;
+            max-height: 120px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        .ecart-photo-name {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #002857;
+        }
+        .main-content {
+            margin-left: 200px;
+            background-color: white;
+            min-height: calc(100vh - 100px);
+            padding: 20px;
+        }
+        .section-title {
+            font-size: 20px;
+            color: #002857;
+            font-weight: 700;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .next-button {
+            float: right;
+            background-color: #FF7514;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .prev-button {
+            float: left;
+            background-color: #002857;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .summary-item {
+            margin-bottom: 8px;
+            padding: 10px;
+            background-color: #ffffff;
+            border-left: 4px solid #FF7514;
+            border-radius: 4px;
+            color: #002857;
+        }
+        .summary-title {
+            font-weight: 800;
+            color: #002857;
+            margin-right: 8px;
+        }
+        .summary-good {
+            border-left-color: #2e7d32;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .summary-warn {
+            border-left-color: #f9a825;
+            background-color: #fff8e1;
+            color: #8a6d00;
+        }
+        .summary-bad {
+            border-left-color: #c62828;
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            padding: 20px;
+        }
+        .date-filter-wrapper {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 40, 87, 0.1);
+        }
+        .date-filter-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+        }
+        .date-filter-picker {
+            width: 100%;
+            max-width: 260px;
+        }
+        .date-filter-wrapper label {
+            color: #002857;
+            font-weight: bold;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        #dateHistorySelect {
+            width: 100%;
+            max-width: 260px;
+            padding: 10px;
+            border: 2px solid #FF7514;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #ffffff;
+            color: #002857;
+        }
+        #dateHistorySelect:hover {
+            background-color: #f5f5f5;
+        }
+        .chart-wrapper {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 40, 87, 0.1);
+        }
+        .chart-wrapper h2 {
+            color: #002857;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        #chartMoyenne {
+            max-width: 100%;
+            max-height: 400px;
+        }
+        #chartParLigne {
+            max-width: 100%;
+            max-height: 400px;
+            display: none;
+        }
+        #auditCategorySelect {
+            width: 100%;
+            max-width: 250px;
+            padding: 10px;
+            border: 2px solid #FF7514;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #ffffff;
+            color: #002857;
+        }
+        #auditCategorySelect:hover {
+            background-color: #f5f5f5;
+        }
+        .pdca-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 40, 87, 0.1);
+        }
+        .pdca-title {
+            color: #002857;
+            margin: 0 0 16px 0;
+            font-size: 22px;
+        }
+        .pdca-filters {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .pdca-filter-item label {
+            display: block;
+            font-size: 12px;
+            color: #002857;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .pdca-filter-item input,
+        .pdca-filter-item select {
+            width: 100%;
+            box-sizing: border-box;
+            border: 2px solid #FF7514;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 13px;
+            color: #002857;
+            background-color: #ffffff;
+            margin: 0;
+        }
+        .pdca-export {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+        .pdca-export-item {
+            min-width: 220px;
+        }
+        .pdca-export-item label {
+            display: block;
+            font-size: 12px;
+            color: #002857;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .pdca-export-item select {
+            width: 100%;
+            box-sizing: border-box;
+            border: 2px solid #FF7514;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 13px;
+            color: #002857;
+            background-color: #ffffff;
+            margin: 0;
+        }
+        .pdca-export-button {
+            border: none;
+            border-radius: 5px;
+            padding: 9px 14px;
+            background-color: #00B2FF;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .pdca-export-button:hover {
+            background-color: #009adf;
+        }
+        .pdca-table-wrapper {
+            overflow-x: auto;
+        }
+        .pdca-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+        .pdca-table th,
+        .pdca-table td {
+            border: 1px solid #d6d6d6;
+            padding: 10px;
+            text-align: left;
+            color: #002857;
+            font-size: 13px;
+            vertical-align: top;
+        }
+        .pdca-table th {
+            background-color: #002857;
+            color: #ffffff;
+            position: sticky;
+            top: 0;
+        }
+        .pdca-empty {
+            color: #002857;
+            font-size: 14px;
+            padding: 10px 0;
+        }
+        .pdca-deadline-banner {
+            display: none;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #c62828;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .pdca-deadline-alert {
+            background-color: #ffebee;
+            color: #c62828;
+            font-weight: 700;
+        }
+        .pdca-photo {
+            max-width: 80px;
+            max-height: 60px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-top: 8px;
+            display: block;
+        }
+        .pdca-completion-cell {
+            min-width: 130px;
+        }
+        .pdca-completion-select {
+            width: 100%;
+            border: 2px solid #FF7514;
+            border-radius: 5px;
+            padding: 6px 8px;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #002857;
+        }
+        .pdca-completion-cell.completed {
+            background-color: #2e7d32;
+            color: #ffffff;
+        }
+        .pdca-completion-cell.completed .pdca-completion-select {
+            background-color: #2e7d32;
+            color: #ffffff;
+            border-color: #2e7d32;
+        }
+        .app-shell {
+            display: none;
+        }
+        .app-shell.active {
+            display: block;
+        }
+        .auth-gate {
+            position: fixed;
+            inset: 0;
+            background-color: #002857;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
+            z-index: 9999;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("image 5 (1).png");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            opacity: 0.35;
+            z-index: 0;
+        }
+        .auth-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        .auth-title {
+            margin: 0 0 16px 0;
+            color: #002857;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .auth-tab {
+            flex: 1;
+            border: 2px solid #FF7514;
+            background: #ffffff;
+            color: #002857;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+            transition: box-shadow 0.3s, background-color 0.3s;
+        }
+        .auth-tab:hover {
+            box-shadow: 0 4px 14px rgba(255, 117, 20, 0.25);
+        }
+        .auth-tab.active {
+            background-color: #FF7514;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(255, 117, 20, 0.35);
+        }
+        .auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .auth-form.active {
+            display: flex;
+        }
+        .auth-form input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 2px solid #FF7514;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: #002857;
+            display: block;
+            margin: 0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.3s;
+        }
+        .auth-form input:focus {
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06), 0 0 0 3px rgba(255, 117, 20, 0.25);
+        }
+        .auth-submit {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 14px;
+            background-color: #FF7514;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(255, 117, 20, 0.30);
+            transition: box-shadow 0.3s, transform 0.2s;
+        }
+        .auth-submit:hover {
+            box-shadow: 0 6px 20px rgba(255, 117, 20, 0.45);
+            transform: translateY(-1px);
+        }
+        .auth-submit:active {
+            box-shadow: 0 2px 6px rgba(255, 117, 20, 0.25);
+            transform: translateY(0);
+        }
+        .login-submit {
+            background-color: #00B2FF;
+            box-shadow: 0 4px 12px rgba(0, 178, 255, 0.30);
+        }
+        .login-submit:hover {
+            background-color: #009adf;
+            box-shadow: 0 6px 20px rgba(0, 178, 255, 0.45);
+        }
+        .login-submit:active {
+            box-shadow: 0 2px 6px rgba(0, 178, 255, 0.25);
+        }
+        .auth-message {
+            min-height: 18px;
+            margin: 12px 0 0;
+            text-align: center;
+            font-size: 13px;
+            color: #002857;
+        }
+        .auth-message.error {
+            color: #c62828;
+        }
+        .auth-message.success {
+            color: #2e7d32;
+        }
+        .auth-login-logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: min(24vw, 160px);
+            height: auto;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+        .auth-login-logo-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: min(24vw, 160px);
+            height: auto;
+            object-fit: contain;
+        }
+        .app-credit {
+            position: fixed;
+            left: 50%;
+            bottom: 10px;
+            transform: translateX(-50%);
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.85;
+            z-index: 10001;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        /* ===== ROBOT ===== */
+        .robot-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: -10px;
+            position: relative;
+        }
+        .robot {
+            width: 100px;
+            height: 90px;
+            position: relative;
+        }
+        .robot-head {
+            width: 80px;
+            height: 55px;
+            background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 100%);
+            border-radius: 18px 18px 12px 12px;
+            margin: 0 auto;
+            position: relative;
+            border: 2px solid #999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+        .robot-antenna {
+            width: 4px;
+            height: 16px;
+            background: #999;
+            border-radius: 2px;
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .robot-antenna::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: #FF7514;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255, 117, 20, 0.6), 0 0 20px rgba(255, 117, 20, 0.3);
+            animation: antennaPulse 2s ease-in-out infinite;
+        }
+        @keyframes antennaPulse {
+            0%, 100% { box-shadow: 0 0 8px rgba(255, 117, 20, 0.6), 0 0 20px rgba(255, 117, 20, 0.3); }
+            50% { box-shadow: 0 0 14px rgba(255, 117, 20, 0.9), 0 0 35px rgba(255, 117, 20, 0.5); }
+        }
+        .robot-eyes {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 14px;
+        }
+        .robot-eye {
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 40% 40%, #ffffff 60%, #e8e8e8 100%);
+            border-radius: 50%;
+            position: relative;
+            border: 2px solid #666;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .robot-pupil {
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle at 35% 35%, #1a4a8a, #002857);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 3px rgba(0,40,87,0.4);
+        }
+        .robot-pupil::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 2px;
+            width: 3px;
+            height: 3px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+        }
+        .robot-eyelid {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            height: 0%;
+            background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 100%);
+            border: 2px solid #666;
+            border-bottom: none;
+            border-radius: 50% 50% 0 0;
+            z-index: 2;
+        }
+        .robot-mouth {
+            width: 20px;
+            height: 8px;
+            border-bottom: 3px solid #666;
+            border-radius: 0 0 10px 10px;
+            margin: 6px auto 0;
+            transition: all 0.3s ease;
+        }
+        .robot-mouth.happy {
+            width: 26px;
+            height: 12px;
+            border-bottom: 3px solid #FF7514;
+            border-left: 2px solid #FF7514;
+            border-right: 2px solid #FF7514;
+            border-radius: 0 0 16px 16px;
+        }
+        .robot-mouth.angry {
+            width: 22px;
+            height: 4px;
+            border-bottom: 3px solid #c62828;
+            border-left: none;
+            border-right: none;
+            border-radius: 0;
+            margin: 10px auto 0;
+        }
+        .robot-eye.angry-eye {
+            border-color: #c62828;
+        }
+        .robot-eyebrow {
+            position: absolute;
+            width: 14px;
+            height: 3px;
+            background: #c62828;
+            border-radius: 2px;
+            top: -6px;
+            z-index: 3;
+            opacity: 0;
+        }
+        .robot-eyebrow-left {
+            left: 0;
+            transform: rotate(20deg);
+            transform-origin: left center;
+        }
+        .robot-eyebrow-right {
+            right: 0;
+            transform: rotate(-20deg);
+            transform-origin: right center;
+        }
+        .robot-body {
+            width: 50px;
+            height: 20px;
+            background: linear-gradient(135deg, #d0d0d0 0%, #a0a0a0 100%);
+            border-radius: 0 0 10px 10px;
+            margin: 0 auto;
+            border: 2px solid #999;
+            border-top: none;
+            position: relative;
+        }
+        .robot-body::before,
+        .robot-body::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            width: 10px;
+            height: 14px;
+            background: #c0c0c0;
+            border-radius: 4px;
+            border: 1.5px solid #999;
+        }
+        .robot-body::before {
+            left: -14px;
+        }
+        .robot-body::after {
+            right: -14px;
+        }
+        .robot-hand {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #d5d5d5 0%, #b0b0b0 100%);
+            border-radius: 50%;
+            border: 2px solid #999;
+            z-index: 10;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .robot-hand-left {
+            left: -8px;
+            top: 15px;
+        }
+        .robot-hand-right {
+            right: -8px;
+            top: 15px;
+        }
+        .robot-hand .finger {
+            position: absolute;
+            width: 6px;
+            height: 8px;
+            background: #c8c8c8;
+            border-radius: 3px;
+            border: 1px solid #999;
+        }
+        .robot-hand-left .finger:nth-child(1) { top: -6px; left: 1px; }
+        .robot-hand-left .finger:nth-child(2) { top: -7px; left: 7px; }
+        .robot-hand-left .finger:nth-child(3) { top: -5px; left: 13px; }
+        .robot-hand-right .finger:nth-child(1) { top: -5px; left: 0px; }
+        .robot-hand-right .finger:nth-child(2) { top: -7px; left: 6px; }
+        .robot-hand-right .finger:nth-child(3) { top: -6px; left: 12px; }
+        .robot-speech {
+            position: absolute;
+            top: -10px;
+            left: 110px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+            color: #002857;
+            padding: 10px 16px;
+            border-radius: 14px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            border: 1px solid rgba(255, 117, 20, 0.2);
+        }
+        .robot-speech::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent #ffffff transparent transparent;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #002857;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .loading-overlay .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid rgba(255,255,255,0.2);
+            border-top-color: #FF7514;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-overlay p {
+            margin-top: 18px;
+            font-size: 16px;
+            letter-spacing: 1px;
+            opacity: 0.85;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script type="module">
+      import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+
+      // Initialize Firebase (si pas déjà initialisé par le SDK compat)
+      const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+      const firestoreDb = getFirestore(app);
+    </script>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p><i class="bi bi-cloud-arrow-down"></i> Chargement des données...</p>
+    </div>
+
+    <div id="authGate" class="auth-gate" style="display:none;">
+        <img src="logo_opex-white-blue.png" alt="Logo OpEx" class="auth-login-logo-left">
+        <img src="Leoni_AG_Logo_svg-removebg-preview-removebg-preview.png" alt="Logo LEONI" class="auth-login-logo">
+
+        <div class="robot-container" id="robotContainer">
+            <div class="robot">
+                <div class="robot-head">
+                    <div class="robot-antenna"></div>
+                    <div class="robot-eyes">
+                        <div class="robot-eye">
+                            <div class="robot-eyebrow robot-eyebrow-left" id="eyebrowL"></div>
+                            <div class="robot-eyelid" id="eyelidL"></div>
+                            <div class="robot-pupil" id="pupilL"></div>
+                        </div>
+                        <div class="robot-eye">
+                            <div class="robot-eyebrow robot-eyebrow-right" id="eyebrowR"></div>
+                            <div class="robot-eyelid" id="eyelidR"></div>
+                            <div class="robot-pupil" id="pupilR"></div>
+                        </div>
+                    </div>
+                    <div class="robot-mouth" id="robotMouth"></div>
+                </div>
+                <div class="robot-body"></div>
+                <div class="robot-hand robot-hand-left" id="handLeft">
+                    <div class="finger"></div><div class="finger"></div><div class="finger"></div>
+                </div>
+                <div class="robot-hand robot-hand-right" id="handRight">
+                    <div class="finger"></div><div class="finger"></div><div class="finger"></div>
+                </div>
+                <div class="robot-speech" id="robotSpeech"></div>
+            </div>
+        </div>
+
+        <div class="auth-card">
+            <h2 class="auth-title"><i class="bi bi-shield-lock"></i> Welcome to Gemba Walk Audit</h2>
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" data-auth-tab="login"><i class="bi bi-box-arrow-in-right"></i> Log in</button>
+                <button type="button" class="auth-tab" data-auth-tab="signup"><i class="bi bi-person-plus"></i> Créer un compte</button>
+            </div>
+
+            <form id="loginForm" class="auth-form active">
+                <input type="text" id="loginMatricule" placeholder="&#xF4C0; Matricule" required>
+                <input type="password" id="loginPassword" placeholder="&#xF47A; Mot de passe" required>
+                <button type="submit" class="auth-submit login-submit"><i class="bi bi-unlock"></i> Se connecter</button>
+            </form>
+
+            <form id="signupForm" class="auth-form">
+                <input type="text" id="signupMatricule" placeholder="&#xF4C0; Matricule" required>
+                <input type="text" id="signupNom" placeholder="&#xF4BA; Nom" required>
+                <input type="text" id="signupPrenom" placeholder="&#xF4BA; Prénom" required>
+                <input type="password" id="signupPassword" placeholder="&#xF47A; Mot de passe" required>
+                <input type="password" id="signupPasswordConfirm" placeholder="&#xF47A; Confirmer le mot de passe" required>
+                <button type="submit" class="auth-submit"><i class="bi bi-person-check"></i> Créer le compte</button>
+            </form>
+
+            <p id="authMessage" class="auth-message"></p>
+        </div>
+    </div>
+
+    <p class="app-credit">© Created by Rhazir Asmaa</p>
+
+    <div id="appShell" class="app-shell">
+    <h1><i class="bi bi-clipboard-data"></i> GEMBA WALK AUDIT</h1>
+    <div class="date" id="dateDisplay"></div>
+    <div id="focusAlert" class="focus-alert"></div>
+
+    <div class="button-container">
+        <button class="nav-button active" data-target="data-section"><i class="bi bi-pencil-square"></i> Entrée DATA</button>
+        <button class="nav-button" data-target="dashboard-section"><i class="bi bi-speedometer2"></i> Dashboard</button>
+        <button class="nav-button" data-target="pdca-section"><i class="bi bi-arrow-repeat"></i> PDCA</button>
+        <hr class="button-separator">
+        <button id="deleteDataButton" class="nav-button delete-data-button"><i class="bi bi-trash3"></i> Supprimer data</button>
+        <button id="logoutButton" class="nav-button logout-button"><i class="bi bi-box-arrow-right"></i> Déconnexion</button>
+    </div>
+
+    <div class="main-content">
+        <div id="data-section" class="content-section active">
+            <div class="dropdowns-container">
+                <select id="workstation">
+                    <option value="">&#xF3E0; -- Sélectionner la section --</option>
+                    <option value="CRA">CRA</option>
+                    <option value="WPA">WPA</option>
+                    <option value="X1310_PDB">X1310 PDB</option>
+                    <option value="X1310_BODY">X1310 BODY</option>
+                    <option value="X1310_EGR">X1310 EGR</option>
+                    <option value="ENGINE">ENGINE</option>
+                    <option value="Smalls_NISSAN">Smalls/NISSAN</option>
+                </select>
+
+                <select id="zone">
+                    <option value="">&#xF3AB; -- Sélectionner la zone --</option>
+                </select>
+
+                <input type="text" id="machineNumber" placeholder="&#xF3E0; Numéro de la machine">
+
+                <select id="category">
+                    <option value="">&#xF5A0; -- Sélectionner Ligne ou machine --</option>
+                </select>
+            </div>
+            <div class="questions-container" id="questionsContainer"></div>
+        </div>
+
+        <div id="dashboard-section" class="content-section">
+            <div class="dashboard-container">
+                <div class="date-filter-wrapper">
+                    <div class="date-filter-layout">
+                        <div class="date-filter-picker">
+                            <label style="display: block; margin-bottom: 8px; color: #002857; font-weight: bold; font-size: 14px;"><i class="bi bi-calendar-event"></i> Historique - Sélectionner une date :</label>
+                            <select id="dateHistorySelect">
+                                <option value="">-- Toutes les dates --</option>
+                            </select>
+                        </div>
+                        <div id="categorySummaryBar" class="category-summary-bar"></div>
+                    </div>
+                    <div id="focusSloganBanner" class="focus-slogan-banner"></div>
+                </div>
+
+                <div class="chart-wrapper">
+                    <h2><i class="bi bi-bar-chart-line"></i> Statistiques - Moyenne par Section</h2>
+                    <canvas id="chartMoyenne"></canvas>
+                </div>
+                
+                <div class="chart-wrapper">
+                    <h2><i class="bi bi-pie-chart"></i> Résultats par Section (Catégorie)</h2>
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #002857; font-weight: bold; font-size: 14px;"><i class="bi bi-tags"></i> Catégorie d'Audit :</label>
+                            <select id="auditCategorySelect">
+                                <option value="">-- Sélectionner une catégorie --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <canvas id="chartByLine"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="pdca-section" class="content-section">
+            <div class="pdca-container">
+                <h2 class="pdca-title"><i class="bi bi-clipboard2-check"></i> PDCA - Suivi des écarts</h2>
+                <div class="pdca-filters">
+                    <div class="pdca-filter-item">
+                        <label for="pdcaFilterSection"><i class="bi bi-funnel"></i> Section</label>
+                        <select id="pdcaFilterSection">
+                            <option value="">Toutes les sections</option>
+                        </select>
+                    </div>
+                    <div class="pdca-filter-item">
+                        <label for="pdcaFilterPilote"><i class="bi bi-person"></i> Pilote</label>
+                        <select id="pdcaFilterPilote">
+                            <option value="">Tous les pilotes</option>
+                        </select>
+                    </div>
+                    <div class="pdca-filter-item">
+                        <label for="pdcaFilterDate"><i class="bi bi-calendar3"></i> Date</label>
+                        <select id="pdcaFilterDate">
+                            <option value="">Toutes les dates</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="pdca-export">
+                    <div class="pdca-export-item">
+                        <label for="pdcaExportDate"><i class="bi bi-calendar-check"></i> Date à exporter</label>
+                        <select id="pdcaExportDate">
+                            <option value="">-- Sélectionner une date --</option>
+                        </select>
+                    </div>
+                    <button id="pdcaExportButton" class="pdca-export-button"><i class="bi bi-file-earmark-excel"></i> Exporter PDCA</button>
+                </div>
+                <div id="pdcaDeadlineBanner" class="pdca-deadline-banner"></div>
+                <div class="pdca-table-wrapper">
+                    <table class="pdca-table" id="pdcaTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-calendar3"></i> Date</th>
+                                <th><i class="bi bi-building"></i> Section</th>
+                                <th><i class="bi bi-diagram-3"></i> Ligne</th>
+                                <th><i class="bi bi-tags"></i> Catégorie</th>
+                                <th><i class="bi bi-exclamation-triangle"></i> Écart</th>
+                                <th><i class="bi bi-search"></i> Cause</th>
+                                <th><i class="bi bi-wrench"></i> Action</th>
+                                <th><i class="bi bi-person"></i> Pilote</th>
+                                <th><i class="bi bi-clock"></i> Deadline</th>
+                                <th><i class="bi bi-check2-circle"></i> Completion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pdcaTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="pdcaEmpty" class="pdca-empty"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // ===== FIREBASE INITIALIZATION =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDouVCBsx5AbR8cUDXn5gRNYJJuH2s0LL4",
+            authDomain: "gembawalk2-6d399.firebaseapp.com",
+            projectId: "gembawalk2-6d399",
+            storageBucket: "gembawalk2-6d399.firebasestorage.app",
+            messagingSenderId: "641483201542",
+            appId: "1:641483201542:web:50fb10933b5ae43b8a7787",
+            measurementId: "G-1FE7B71E90"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Cached data from Firestore (synced in real-time)
+        let cachedUsers = [];
+        let cachedResults = [];
+
+        // Données pour les zones déroulantes
+        const zoneData = {
+            'CRA': ['Zone RENAUT', 'Zone NISSAN'],
+            'WPA': ['Zone RENAUT', 'Zone NISSAN'],
+            'X1310_PDB': ['X1310 PDB 2.1', 'X1310 PDB 2.2'],
+            'X1310_BODY': ['X1310 BODY 3.1', 'X1310 BODY 3.2'],
+            'X1310_EGR': ['X1310 EGR ICE', 'X1310 EGR HEV'],
+            'ENGINE': ['Engine XJI', 'Engine X1310'],
+            'Smalls_NISSAN': ['X1310 Smalls', 'P13A EGR', 'P13A MAIN/BODY', 'P13A Smalls']
+        };
+
+        // Données pour les lignes (utilisées pour X1310_PDB, X1310_BODY, etc.)
+        const lineData = {
+            'X1310_PDB': ['Ligne 1', 'Ligne 2', 'Ligne 3'],
+            'X1310_BODY': ['Ligne 1', 'Ligne 2', 'Ligne 3'],
+            'X1310_EGR': ['Ligne 1', 'Ligne 2'],
+            'ENGINE': ['Ligne 1', 'Ligne 2'],
+            'Smalls_NISSAN': ['Ligne 1', 'Ligne 2']
+        };
+
+        // Options spécifiques selon la zone (ex: X1310 PDB 2.1)
+        const zoneSpecificOptions = {
+            'X1310 PDB 2.1': [
+                'Carrossel X1310 PDB DG1 - SAMIRI',
+                'X1310 PDB DG1 - FERTOUNE',
+                'X1310 PDB DG2 - HACHIMI',
+                'X1310 PDB DG2 - LAKHIAR',
+                'X1310 PDB DD - CHAJRI'
+            ]
+            ,
+            'X1310 PDB 2.2': [
+                'X1310 PDB DG4 - Jaray',
+                'X1310 PDB DG4 - Marchoud',
+                'X1310 PDB DG5 - BOUHA',
+                'X1310 PDB DG5 - ARBAINE',
+                'X1310 PDB DG6 - ABOUALI',
+                'X1310 PDB DG6 - REGUADI'
+            ],
+            'X1310 BODY 3.1': [
+                'X1310 BODY 1 - ELLAITI',
+                'X1310 BODY 2 - ELLAITI',
+                'X1310 BODY 1 - SALMA ELKAMEL',
+                'X1310 BODY 2 - SALMA ELKAMEL',
+                'X1310 BODY 3 - SANAE BENAICHA',
+                'X1310 BODY 3 - FADOUA ERRIHANI'
+            ],
+            'X1310 BODY 3.2': [
+                'X1310 BODY 4 - MAGHFOUR',
+                'X1310 BODY 5 - OUBNYOUSSEF',
+                'X1310 BODY 6 - MAGHFOUR',
+                'X1310 BODY 4 - IGLI HANANE',
+                'X1310 BODY 5 - LAHCEN AMJJATI',
+                'X1310 BODY 6 - SAIDI HANANE'
+            ],
+            'X1310 EGR ICE': [
+                'EGR ICE LAD 1 - MARHOUM BOUCHRA',
+                'EGR ICE LAD 2 - MARHOUM BOUCHRA',
+                'EGR ICE LAD 3 - FATIMA EZAHRA BELMAAZA',
+                'EGR ICE LAD 1 - NEZHA ZEYAD',
+                'EGR ICE LAD 2 - NEZHA ZEYAD',
+                'EGR ICE LAD 3 - NEZHA ZEYAD'
+            ],
+            'X1310 EGR HEV': [
+                'EGR HEV LAD 1 - KHIERA FAHIM',
+                'EGR HEV LAD 2 - ISSAM MANOUAL',
+                'EGR HEV LAD 1 - AHLAM MAHRACH',
+                'EGR HEV LAD 2 - NAJAT EL KHIER',
+                'EGR HEV LAD 3 - HAYAT FARITIAS'
+            ],
+            'Engine X1310': [
+                'X1310 Engine HR12 EURO 7 LAD 1 - RIMAHI',
+                'X1310 Engine HR12 EURO 7 LAD 2 - RIMAHI',
+                'X1310 Engine HR12 EURO 7 LAD 3 - RIMAHI',
+                'X1310 Engine HR12 EURO 7 LAD 4 - RIMAHI',
+                'X1310 Engine HR12 EURO 7 LAD 1 - EL HAYAT',
+                'X1310 Engine K9K P13-10 LAD 1 - EL HAYAT',
+                'X1310 Engine HR12 EURO 7 LAD 3 - RIMAHI',
+                'X1310 Engine HR13-LAD 1 - RIMAHI',
+                'X1310 Engine HR13-LAD 2 - BENARYF',
+                'X1310 Engine HR12 EURO 7 LAD 1 - BENARYF',
+                'X1310 Engine HR12 EURO 7 LAD 2 - BENARYF',
+                'X1310 Engine HR12 EURO 7 LAD 3 - BENARYF',
+                'X1310 Engine HR12 EURO 7 LAD 4 - BENARYF'
+            ],
+            'Engine XJI': [
+                'MOT XJI - DAOUD',
+                'MOT XJI ANT - RIMAHI',
+                'MOT XJI ANT - FOUZIA BOUFARGHOUSE',
+                'MOT XJI - EL HAYAT',
+                'MOT XJI - RIMAHI'
+            ],
+            'P13A MAIN/BODY': [
+                'P13A BODY NN (SAIDA BELAAROUSSIA)',
+                'P13A BODY NN (HAJAR LAKHAL)',
+                'P13A MAIN RHD SIHAM BENALI',
+                'P13A MAIN LHD RAJAE OUMSDAT',
+                'P13A MAIN LHAD ASMAA EL HAROUCHI'
+            ],
+            'P13A EGR': [
+                'P13A EGR ICE NABILA MAAROUF',
+                'P13A EGR HEV KABIRA MOUTTAKI',
+                'P13A EGR HEV NN (IBTISSAM LAMGHAMAJ)'
+            ],
+            'P13A Smalls': [
+                'P13A SMALLS REDDAH YASSINE',
+                'P13A SMALLS HANNANE OMAR'
+            ],
+            'X1310 Smalls': [
+                'X1310 Smalls Conducteur 1 - Eddahbi',
+                'X1310 Smalls Conducteur 2 - Eddahbi',
+                'X1310 Smalls Passager 1 - Eddahbi',
+                'X1310 Smalls Passager 2 - Eddahbi',
+                'X1310 Smalls ROOF 1 - Eddahbi',
+                'X1310 Smalls ROOF 2 - Eddahbi',
+                'X1310 Smalls Front bumper 1 - Eddahbi',
+                'X1310 Smalls Front bumper 2 - Eddahbi',
+                'X1310 Smalls Rear bumper 1 - Eddahbi',
+                'X1310 Smalls Rear bumper 2 - Eddahbi',
+                'X1310 Smalls Rear door 1 - Eddahbi',
+                'X1310 Smalls Rear door 2 - Eddahbi',
+                'X1310 Smalls Rear door 3 - Eddahbi',
+                'X1310 Smalls Hayon 1 - Eddahbi',
+                'X1310 Smalls Hayon 2 - Eddahbi',
+                'X1310 Smalls Hayon R - Eddahbi',
+                'X1310 Smalls Shunt console - Zahira',
+                'X1310 Smalls Conducteur 1 - Korir',
+                'X1310 Smalls Conducteur 2 - Korir',
+                'X1310 Smalls Passager 1 - Korir',
+                'X1310 Smalls Passager 2 - Korir',
+                'X1310 Smalls ROOF 1 - Korir',
+                'X1310 Smalls ROOF 2 - Korir',
+                'X1310 Smalls Front bumper - Korir',
+                'X1310 Smalls Front bumper 2 - Korir',
+                'X1310 Smalls Rear bumper 1 - Korir',
+                'X1310 Smalls Rear bumper 2 - Korir',
+                'X1310 Smalls Rear door 1 - Korir',
+                'X1310 Smalls Rear door 2 - Korir',
+                'X1310 Smalls Rear door 3 - Korir',
+                'X1310 Smalls Hayon 1 - Korir',
+                'X1310 Smalls Hayon 2 - Korir',
+                'X1310 Smalls Hayon R - Korir',
+                'X1310 Smalls Shunt console - Korir'
+            ]
+        };
+        // Données pour déterminer si c'est Machine ou Ligne
+        const machineOrLineData = {
+            'CRA': ['Machine'],
+            'WPA': ['Machine'],
+            'X1310_PDB': ['Ligne'],
+            'X1310_BODY': ['Ligne'],
+            'X1310_EGR': ['Ligne'],
+            'ENGINE': ['Ligne'],
+            'Smalls_NISSAN': ['Ligne']
+        };
+
+        // Données pour les questions par section/ligne
+        const questionsData = {
+            'Sécurité': [
+                "Tous les équipements électriques sont bien équipés, correctement utilisés et en conditions sécurisées.",
+                "Les portes bol sont fermées et vides (aucun objet ou documents à l'intérieurs)",
+                "Extincteurs, signalisation, équipements de protection et voies d'évacuation sont présents, fonctionnels et accessibles."
+            ],
+            'Qualité': [
+                "Application correcte des gestes 'pousser-tirer-pousser'.",
+                "Respect de l'utilisation des outils GAF selon le mode opératoire, avec fixation correcte sur le poste.",
+                "Connexions sensibles manipulées avec précaution, sans redressement.",
+                "Aucun fils ne traine au sol.",
+                "Respect du cheminement des fils dans les tapis prévu à cet effet.",
+                "Utilisation conforme des fourches et des CP inertes pour l'enrubannage.",
+                "Respect des pats d'enrubannage pour garantir l'absence des fils apparents dans les faisceaux."
+            ],
+            '5S': [
+                "Chaque objet est marqué et identifié, les objets sont dans les emplacements identifiés.",
+                "La zone de travail est propre, les matériels de nettoyage sont disponibles et à proximité."
+            ],
+            'Amélioration_continue': [
+                "Les outils de management visuel sont mis à jour (KOSU, tableau QRQC, autres outils suivant la zone de production).",
+                "Les objectifs sont discutés journalièrement lors des réunions (Présence de PDCA pour les indicateurs non atteints)."
+            ],
+            'Equipement': [
+                "Les outils de travail utilisés pour l'assemblage/réparation du produit existent et le process de réparation est respecté.",
+                "L'équipement est fonctionnel et peut être facilement utilisé par l'opérateur. La maintenance préventive est réalisée dans les délais (présence de l'étiquette de la maintenance préventive)."
+            ],
+            'RH': [
+                "La matrice de polyvalence est-elle à jour? Le planning de rotation est-il respecté?",
+                "Rémunération - les employés connaissent le LPS Bonus et sa valeur selon leur temps de travail (choisir un employé et lui poser des questions)."
+            ],
+            'Matière': [
+                "Le niveau de stock est respecté et conforme aux standards.",
+                "Les matières sont dans leurs bacs prévus, pas de mélange de matière dans les bacs."
+            ],
+            'Standard': [
+                "Est-ce que l'opérateur connait les documents par poste (plan de surveillance, mode opératoire, instruction de sécurité…)?",
+                "Est-ce que l'opérateur connait les caractéristiques spéciales du poste?"
+            ]
+        };
+
+        const authGate = document.getElementById('authGate');
+        const appShell = document.getElementById('appShell');
+        const authMessage = document.getElementById('authMessage');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const deleteDataButton = document.getElementById('deleteDataButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const focusAlert = document.getElementById('focusAlert');
+        const focusSloganBanner = document.getElementById('focusSloganBanner');
+        const categorySummaryBar = document.getElementById('categorySummaryBar');
+
+        const workstationSelect = document.getElementById('workstation');
+        const zoneSelect = document.getElementById('zone');
+        const categorySelect = document.getElementById('category');
+        const machineNumberInput = document.getElementById('machineNumber');
+
+        function getUsers() {
+            return cachedUsers;
+        }
+
+        function setUsers(users) {
+            cachedUsers = users;
+        }
+
+        function setAuthMessage(message, type = '') {
+            authMessage.textContent = message;
+            authMessage.className = 'auth-message' + (type ? ' ' + type : '');
+        }
+
+        function showApp() {
+            const tl = gsap.timeline();
+            tl.to('.auth-card', { opacity: 0, y: 30, scale: 0.9, duration: 0.3, ease: 'power2.in' }, 0)
+              .to('.robot-container', { opacity: 0, y: -20, scale: 0.8, duration: 0.3, ease: 'power2.in' }, 0)
+              .to(authGate, {
+                opacity: 0,
+                duration: 0.4,
+                ease: 'power2.in',
+                onComplete: () => {
+                    authGate.style.display = 'none';
+                    gsap.set(['.auth-card', '.robot-container'], { clearProps: 'all' });
+                    appShell.classList.add('active');
+
+                    const appTl = gsap.timeline();
+                    appTl.fromTo(appShell,
+                        { opacity: 0 },
+                        { opacity: 1, duration: 0.4, ease: 'power2.out' }
+                    )
+                    .fromTo('h1',
+                        { opacity: 0, y: -30, scale: 0.9 },
+                        { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.5)' }, 0.1
+                    )
+                    .fromTo('.button-container .nav-button',
+                        { opacity: 0, x: -50, scale: 0.9 },
+                        { opacity: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.08, ease: 'back.out(1.3)' }, 0.2
+                    )
+                    .fromTo('.date',
+                        { opacity: 0, x: 40, scale: 0.9 },
+                        { opacity: 1, x: 0, scale: 1, duration: 0.5, ease: 'back.out(1.3)' }, 0.3
+                    )
+                    .fromTo('.content-section.active',
+                        { opacity: 0, y: 20 },
+                        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.4
+                    );
+                }
+            }, 0.2);
+        }
+
+        function showAuth() {
+            appShell.classList.remove('active');
+            authGate.style.display = 'flex';
+            const tl = gsap.timeline();
+            tl.fromTo(authGate,
+                { opacity: 0 },
+                { opacity: 1, duration: 0.4, ease: 'power2.out' }
+            )
+            .fromTo('.robot-container',
+                { opacity: 0, y: -40, scale: 0.6 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'bounce.out' }, 0.15
+            )
+            .fromTo('.auth-card',
+                { opacity: 0, y: 50, scale: 0.85 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'elastic.out(1, 0.7)' }, 0.2
+            );
+        }
+
+        function logout() {
+            localStorage.removeItem('gemba_session');
+            loginForm.reset();
+            signupForm.reset();
+            setAuthMessage('Vous êtes déconnecté.', 'success');
+
+            authTabs.forEach(t => t.classList.remove('active'));
+            const loginTab = document.querySelector('[data-auth-tab="login"]');
+            if (loginTab) {
+                loginTab.classList.add('active');
+            }
+            loginForm.classList.add('active');
+            signupForm.classList.remove('active');
+
+            showAuth();
+        }
+
+        logoutButton.addEventListener('click', logout);
+
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.getAttribute('data-auth-tab');
+                authTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                if (target === 'login') {
+                    loginForm.classList.add('active');
+                    signupForm.classList.remove('active');
+                } else {
+                    signupForm.classList.add('active');
+                    loginForm.classList.remove('active');
+                }
+                setAuthMessage('');
+
+                // GSAP animation sur le formulaire actif
+                const activeForm = document.querySelector('.auth-form.active');
+                gsap.fromTo(activeForm.querySelectorAll('input, .auth-submit'),
+                    { opacity: 0, x: -20 },
+                    { opacity: 1, x: 0, duration: 0.35, stagger: 0.07, ease: 'power2.out' }
+                );
+            });
+        });
+
+        signupForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const matricule = document.getElementById('signupMatricule').value.trim();
+            const nom = document.getElementById('signupNom').value.trim();
+            const prenom = document.getElementById('signupPrenom').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupPasswordConfirm').value;
+
+            if (!matricule || !nom || !prenom || !password) {
+                setAuthMessage('Veuillez remplir tous les champs.', 'error');
+                return;
+            }
+            if (password !== confirmPassword) {
+                setAuthMessage('Les mots de passe ne correspondent pas.', 'error');
+                return;
+            }
+
+            try {
+                // Vérifier si le matricule existe déjà dans Firestore
+                const existingSnap = await db.collection('users').where('matricule', '==', matricule).get();
+                if (!existingSnap.empty) {
+                    setAuthMessage('Ce matricule existe déjà.', 'error');
+                    return;
+                }
+
+                // Ajouter l'utilisateur dans Firestore
+                await db.collection('users').add({ matricule, nom, prenom, password });
+                setAuthMessage('Compte créé avec succès. Vous pouvez vous connecter.', 'success');
+                signupForm.reset();
+            } catch (err) {
+                console.error('Erreur inscription:', err);
+                setAuthMessage('Erreur lors de la création du compte.', 'error');
+            }
+        });
+
+        loginForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const matricule = document.getElementById('loginMatricule').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                // Interroger Firestore directement pour la connexion
+                const snap = await db.collection('users').where('matricule', '==', matricule).get();
+                let userFound = null;
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    if (data.password === password) userFound = data;
+                });
+
+                if (!userFound) {
+                    setAuthMessage('Matricule ou mot de passe invalide.', 'error');
+                    robotAngry();
+                    return;
+                }
+
+                localStorage.setItem('gemba_session', JSON.stringify({ matricule, loggedAt: new Date().toISOString() }));
+                setAuthMessage('Connexion réussie.', 'success');
+
+                // Robot welcome animation
+                robotWelcome(userFound.prenom || userFound.nom || matricule, () => {
+                    showApp();
+                    updateTodayFocusAlert();
+                });
+            } catch (err) {
+                console.error('Erreur connexion:', err);
+                setAuthMessage('Erreur de connexion au serveur.', 'error');
+            }
+        });
+
+        // Session check moved to async initApp() at bottom
+
+        // Désactiver la liste de catégories au départ
+        categorySelect.disabled = true;
+
+        // Gestion des boutons de navigation
+        const navButtons = document.querySelectorAll('.nav-button');
+        navButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                if (!targetId) {
+                    return;
+                }
+                
+                // Masquer toutes les sections
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Retirer la classe active de tous les boutons
+                navButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Afficher la section cible et activer le bouton
+                const targetSection = document.getElementById(targetId);
+                targetSection.classList.add('active');
+                this.classList.add('active');
+
+                // GSAP animation d'entrée de section améliorée
+                const sectionTl = gsap.timeline();
+                sectionTl.fromTo(targetSection,
+                    { opacity: 0, y: 30, scale: 0.98 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'power3.out' }
+                );
+                // Animer les enfants directs en cascade
+                const children = targetSection.querySelectorAll('.chart-wrapper, .dropdowns-container, .questions-container, .pdca-container, .dashboard-container, .date-filter-wrapper');
+                if (children.length > 0) {
+                    sectionTl.fromTo(children,
+                        { opacity: 0, y: 20 },
+                        { opacity: 1, y: 0, duration: 0.4, stagger: 0.1, ease: 'power2.out' }, 0.15
+                    );
+                }
+
+                // Bouton actif - petit pulse
+                gsap.fromTo(this,
+                    { scale: 1 },
+                    { scale: 1.08, duration: 0.15, yoyo: true, repeat: 1, ease: 'power2.out' }
+                );
+
+                // Si c'est le dashboard, initialiser les graphiques
+                if (targetId === 'dashboard-section') {
+                    setTimeout(initDashboard, 100);
+                }
+
+                if (targetId === 'pdca-section') {
+                    setTimeout(initPDCA, 100);
+                }
+            });
+        });
+
+        deleteDataButton.addEventListener('click', async function() {
+            const shouldDelete = confirm('Voulez-vous vraiment supprimer toutes les données d\'audit ?');
+            if (!shouldDelete) return;
+
+            try {
+                // Supprimer tous les résultats de Firestore
+                const snap = await db.collection('results').get();
+                const batch = db.batch();
+                snap.docs.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+                cachedResults = [];
+
+            if (charts.chartMoyenne) {
+                charts.chartMoyenne.destroy();
+                charts.chartMoyenne = null;
+            }
+            if (charts.chartByLine) {
+                charts.chartByLine.destroy();
+                charts.chartByLine = null;
+            }
+
+            initPDCA();
+            updateCategorySummaryChips(selectedDate);
+            updateTodayFocusAlert();
+            alert('Les données d\'audit ont été supprimées.');
+            } catch (err) {
+                console.error('Erreur suppression:', err);
+                alert('Erreur lors de la suppression des données.');
+            }
+        });
+
+        workstationSelect.addEventListener('change', function() {
+            const selectedWorkstation = this.value;
+            
+            // Réinitialiser la liste des zones
+            zoneSelect.innerHTML = '<option value="">-- Sélectionner la zone --</option>';
+            categorySelect.value = '';
+            machineNumberInput.value = '';
+            document.getElementById('questionsContainer').classList.remove('active');
+            
+            // Déterminer si c'est Machine ou Ligne
+            const isMachine = selectedWorkstation === 'CRA' || selectedWorkstation === 'WPA';
+            
+            if (isMachine) {
+                // Afficher la zone de texte pour le numéro de machine
+                machineNumberInput.classList.add('active');
+                categorySelect.classList.remove('active');
+                categorySelect.disabled = true;
+            } else if (selectedWorkstation !== '') {
+                // Afficher la liste déroulante pour la ligne
+                categorySelect.classList.add('active');
+                machineNumberInput.classList.remove('active');
+                categorySelect.disabled = false;
+                
+                // Remplir la liste des lignes
+                categorySelect.innerHTML = '<option value="">-- Sélectionner Ligne --</option>';
+                if (lineData[selectedWorkstation]) {
+                    lineData[selectedWorkstation].forEach(line => {
+                        const option = document.createElement('option');
+                        option.value = line;
+                        option.textContent = line;
+                        categorySelect.appendChild(option);
+                    });
+                }
+            } else {
+                // Aucune sélection
+                machineNumberInput.classList.remove('active');
+                categorySelect.classList.remove('active');
+                categorySelect.disabled = true;
+            }
+            
+            if (selectedWorkstation && zoneData[selectedWorkstation]) {
+                zoneData[selectedWorkstation].forEach(zone => {
+                    const option = document.createElement('option');
+                    option.value = zone;
+                    option.textContent = zone;
+                    zoneSelect.appendChild(option);
+                });
+            }
+        });
+
+        zoneSelect.addEventListener('change', function() {
+            const selectedZone = this.value;
+            const selectedWorkstation = workstationSelect.value;
+
+            // Reset questions and category input
+            document.getElementById('questionsContainer').classList.remove('active');
+
+            if (selectedZone === '') {
+                // nothing selected
+                categorySelect.disabled = true;
+                machineNumberInput.classList.remove('active');
+                categorySelect.classList.remove('active');
+                return;
+            }
+
+            // If workstation is CRA or WPA -> show machine number input
+            if (selectedWorkstation === 'CRA' || selectedWorkstation === 'WPA') {
+                machineNumberInput.classList.add('active');
+                machineNumberInput.disabled = false;
+                categorySelect.classList.remove('active');
+                categorySelect.disabled = true;
+            } else {
+                // For other sections show the category select (Ligne)
+                machineNumberInput.classList.remove('active');
+                machineNumberInput.disabled = true;
+                categorySelect.classList.add('active');
+                categorySelect.disabled = false;
+
+                // If there are zone-specific options use them (eg. X1310 PDB 2.1)
+                if (zoneSpecificOptions[selectedZone]) {
+                    categorySelect.innerHTML = '<option value="">-- Sélectionner Ligne --</option>';
+                    zoneSpecificOptions[selectedZone].forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item;
+                        opt.textContent = item;
+                        categorySelect.appendChild(opt);
+                    });
+                } else {
+                    // Fallback to generic lineData for the workstation
+                    categorySelect.innerHTML = '<option value="">-- Sélectionner Ligne --</option>';
+                    if (lineData[selectedWorkstation]) {
+                        lineData[selectedWorkstation].forEach(line => {
+                            const opt = document.createElement('option');
+                            opt.value = line;
+                            opt.textContent = line;
+                            categorySelect.appendChild(opt);
+                        });
+                    }
+                }
+            }
+        });
+
+        categorySelect.addEventListener('change', function() {
+            const val = this.value;
+            const questionsContainer = document.getElementById('questionsContainer');
+            if (val !== '') {
+                // afficher la première section (Sécurité) pour toute sélection de ligne
+                renderQuestionsSection('Sécurité');
+            } else {
+                questionsContainer.classList.remove('active');
+            }
+        });
+
+        // Event listener pour la zone de texte du numéro de machine
+        function handleMachineInputChange() {
+            const selectedWorkstation = workstationSelect.value;
+            const selectedZone = zoneSelect.value;
+            const machineNumber = machineNumberInput.value.trim();
+            const questionsContainer = document.getElementById('questionsContainer');
+
+            // Cette logique s'applique uniquement aux sections machine (CRA / WPA)
+            if (selectedWorkstation === 'CRA' || selectedWorkstation === 'WPA') {
+                if (selectedZone !== '' && machineNumber !== '') {
+                    // Même logique que les autres sections : commencer à Sécurité
+                    renderQuestionsSection('Sécurité');
+                } else {
+                    questionsContainer.classList.remove('active');
+                }
+            }
+        }
+
+        machineNumberInput.addEventListener('input', handleMachineInputChange);
+        machineNumberInput.addEventListener('change', handleMachineInputChange);
+
+        // store responses per section
+        const responses = {};
+        const discrepancies = {};
+        let currentSection = null;
+
+        function buildDiscrepancyId(section, questionIndex) {
+            return `ecart-${encodeURIComponent(section)}-${questionIndex}`;
+        }
+
+        function ensureDiscrepancy(section, questionIndex) {
+            discrepancies[section] = discrepancies[section] || [];
+            if (!discrepancies[section][questionIndex]) {
+                discrepancies[section][questionIndex] = {
+                    photoName: '',
+                    photoData: '',
+                    description: '',
+                    cause: '',
+                    action: '',
+                    pilote: '',
+                    deadline: ''
+                };
+            }
+            return discrepancies[section][questionIndex];
+        }
+
+        function toggleDiscrepancy(section, questionIndex, show) {
+            const boxId = buildDiscrepancyId(section, questionIndex);
+            const box = document.getElementById(boxId);
+            if (!box) return;
+            if (show) {
+                box.classList.add('active');
+            } else {
+                box.classList.remove('active');
+            }
+        }
+
+        function selectResponse(button, questionIndex) {
+            const buttons = button.parentElement.querySelectorAll('.response-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            // store response in responses map
+            if (!currentSection) return;
+            responses[currentSection] = responses[currentSection] || [];
+            responses[currentSection][questionIndex] = button.dataset.value;
+            toggleDiscrepancy(currentSection, questionIndex, button.dataset.value === 'NOK');
+            updateSectionSummary(currentSection);
+        }
+
+        // Order of sections to display
+        const sectionOrder = ['Sécurité','Qualité','5S','Amélioration_continue','Equipement','RH','Matière','Standard'];
+
+        function updateSectionSummary(section) {
+            const summaryEl = document.getElementById('sectionSummary');
+            if (!summaryEl) return;
+            const answers = responses[section] || [];
+            const okCount = answers.filter(a => a === 'OK').length;
+            const total = (questionsData[section] || []).length;
+            summaryEl.textContent = `OK: ${okCount} / ${total}`;
+        }
+
+        function validateSectionBeforeNext(section) {
+            const questions = questionsData[section] || [];
+            const answers = responses[section] || [];
+
+            for (let i = 0; i < questions.length; i++) {
+                if (!answers[i]) {
+                    alert(`Veuillez répondre à la question ${i + 1} avant de continuer.`);
+                    return false;
+                }
+
+                if (answers[i] === 'NOK') {
+                    const discrepancy = ensureDiscrepancy(section, i);
+                    const isComplete =
+                        !!discrepancy.photoData &&
+                        (discrepancy.description || '').trim() !== '' &&
+                        (discrepancy.cause || '').trim() !== '' &&
+                        (discrepancy.action || '').trim() !== '' &&
+                        (discrepancy.pilote || '').trim() !== '' &&
+                        (discrepancy.deadline || '').trim() !== '';
+
+                    if (!isComplete) {
+                        alert(`Question ${i + 1} en NOK : veuillez remplir tous les champs Écart (photo, description, cause, action, pilote, deadline).`);
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        // Render questions for a given section title
+        function renderQuestionsSection(section) {
+            currentSection = section;
+            responses[currentSection] = responses[currentSection] || [];
+            discrepancies[currentSection] = discrepancies[currentSection] || [];
+
+            const questionsContainer = document.getElementById('questionsContainer');
+            const questions = questionsData[section] || [];
+            questionsContainer.innerHTML = '';
+            const title = document.createElement('div');
+            title.className = 'section-title';
+            // display nicer label for Amélioration_continue and Matière/Standard
+            const labelMap = {
+                'Amélioration_continue': 'Amélioration continue et gestion visuelle',
+                'Matière': 'Matière',
+                'Standard': 'Respect du standard'
+            };
+            title.textContent = labelMap[section] || section;
+            questionsContainer.appendChild(title);
+
+            questions.forEach((q, i) => {
+                const item = document.createElement('div');
+                item.className = 'question-item';
+                const sectionName = currentSection;
+                const prevResponse = responses[currentSection][i] || '';
+                const discrepancyData = ensureDiscrepancy(currentSection, i);
+                item.innerHTML = `
+                    <div class="question-text">${i+1}. ${q}</div>
+                    <div class="response-buttons">
+                        <button class="response-btn ok ${prevResponse==='OK'?'selected':''}" data-value="OK" onclick="selectResponse(this, ${i})"><i class="bi bi-check-circle"></i> OK</button>
+                        <button class="response-btn nok ${prevResponse==='NOK'?'selected':''}" data-value="NOK" onclick="selectResponse(this, ${i})"><i class="bi bi-x-circle"></i> NOK</button>
+                        <button class="response-btn na ${prevResponse==='NA'?'selected':''}" data-value="NA" onclick="selectResponse(this, ${i})"><i class="bi bi-dash-circle"></i> NA</button>
+                    </div>
+                `;
+
+                const ecartBox = document.createElement('div');
+                ecartBox.id = buildDiscrepancyId(currentSection, i);
+                ecartBox.className = `ecart-box ${prevResponse === 'NOK' ? 'active' : ''}`;
+                ecartBox.innerHTML = `
+                    <div class="ecart-title"><i class="bi bi-exclamation-triangle"></i> Écart</div>
+                    <div class="ecart-grid">
+                        <div>
+                            <label><i class="bi bi-camera"></i> Photo</label>
+                            <input type="file" accept="image/*" class="ecart-photo-input">
+                            <div class="ecart-photo-name"></div>
+                            <img class="ecart-photo-preview" alt="Aperçu photo écart">
+                        </div>
+                        <div>
+                            <label><i class="bi bi-card-text"></i> Description</label>
+                            <textarea class="ecart-description" placeholder="Décrire l'écart..."></textarea>
+                        </div>
+                        <div>
+                            <label><i class="bi bi-search"></i> Cause</label>
+                            <textarea class="ecart-cause" placeholder="Décrire la cause..."></textarea>
+                        </div>
+                        <div>
+                            <label><i class="bi bi-wrench"></i> Action</label>
+                            <textarea class="ecart-action" placeholder="Décrire l'action..."></textarea>
+                        </div>
+                        <div>
+                            <label><i class="bi bi-person"></i> Pilote</label>
+                            <input type="text" class="ecart-pilote" placeholder="Nom du pilote">
+                        </div>
+                        <div>
+                            <label><i class="bi bi-clock"></i> Deadline</label>
+                            <input type="date" class="ecart-deadline">
+                        </div>
+                    </div>
+                `;
+
+                const descriptionInput = ecartBox.querySelector('.ecart-description');
+                const causeInput = ecartBox.querySelector('.ecart-cause');
+                const actionInput = ecartBox.querySelector('.ecart-action');
+                const piloteInput = ecartBox.querySelector('.ecart-pilote');
+                const deadlineInput = ecartBox.querySelector('.ecart-deadline');
+                const photoInput = ecartBox.querySelector('.ecart-photo-input');
+                const photoName = ecartBox.querySelector('.ecart-photo-name');
+                const photoPreview = ecartBox.querySelector('.ecart-photo-preview');
+
+                descriptionInput.value = discrepancyData.description || '';
+                causeInput.value = discrepancyData.cause || '';
+                actionInput.value = discrepancyData.action || '';
+                piloteInput.value = discrepancyData.pilote || '';
+                deadlineInput.value = discrepancyData.deadline || '';
+
+                if (discrepancyData.photoName) {
+                    photoName.textContent = `Fichier: ${discrepancyData.photoName}`;
+                }
+                if (discrepancyData.photoData) {
+                    photoPreview.src = discrepancyData.photoData;
+                    photoPreview.style.display = 'block';
+                }
+
+                descriptionInput.addEventListener('input', function() {
+                    ensureDiscrepancy(sectionName, i).description = this.value;
+                });
+                causeInput.addEventListener('input', function() {
+                    ensureDiscrepancy(sectionName, i).cause = this.value;
+                });
+                actionInput.addEventListener('input', function() {
+                    ensureDiscrepancy(sectionName, i).action = this.value;
+                });
+                piloteInput.addEventListener('input', function() {
+                    ensureDiscrepancy(sectionName, i).pilote = this.value;
+                });
+                deadlineInput.addEventListener('change', function() {
+                    ensureDiscrepancy(sectionName, i).deadline = this.value;
+                });
+
+                photoInput.addEventListener('change', function(event) {
+                    const file = event.target.files && event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = function(loadEvent) {
+                        const result = loadEvent.target && loadEvent.target.result ? loadEvent.target.result : '';
+                        const entry = ensureDiscrepancy(sectionName, i);
+                        entry.photoName = file.name;
+                        entry.photoData = String(result);
+                        photoName.textContent = `Fichier: ${file.name}`;
+                        photoPreview.src = String(result);
+                        photoPreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                item.appendChild(ecartBox);
+                questionsContainer.appendChild(item);
+            });
+
+            // Section summary
+            const summary = document.createElement('div');
+            summary.id = 'sectionSummary';
+            summary.style.marginTop = '10px';
+            summary.style.fontWeight = '600';
+            summary.textContent = 'OK: 0 / ' + (questions.length);
+            questionsContainer.appendChild(summary);
+            updateSectionSummary(section);
+
+            // Next button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'prev-button';
+            const idx = sectionOrder.indexOf(section);
+            if (idx > 0) {
+                prevBtn.textContent = 'Précédent';
+                prevBtn.onclick = function() { renderQuestionsSection(sectionOrder[idx-1]); };
+                questionsContainer.appendChild(prevBtn);
+            }
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'next-button';
+            if (idx >= 0 && idx < sectionOrder.length - 1) {
+                nextBtn.textContent = 'Suivant';
+                nextBtn.onclick = function() {
+                    if (!validateSectionBeforeNext(section)) return;
+                    renderQuestionsSection(sectionOrder[idx+1]);
+                };
+            } else {
+                nextBtn.textContent = 'Terminer';
+                nextBtn.onclick = function() {
+                    if (!validateSectionBeforeNext(section)) return;
+                    showFinalSummary();
+                };
+            }
+            questionsContainer.appendChild(nextBtn);
+
+            questionsContainer.classList.add('active');
+        }
+
+        function getColorForPercent(percent) {
+            const value = Number(percent);
+            if (value >= 80) return '#2e7d32';
+            if (value >= 60 && value < 80) return '#f9a825';
+            return '#c62828';
+        }
+
+        function showFinalSummary() {
+            const questionsContainer = document.getElementById('questionsContainer');
+            questionsContainer.innerHTML = '';
+            const title = document.createElement('div');
+            title.className = 'section-title';
+            title.textContent = 'Récapitulatif';
+            questionsContainer.appendChild(title);
+
+            // compute totals
+            let totalOK = 0;
+            let totalQ = 0;
+            // local label map for nicer names
+            const labelMap = {
+                'Amélioration_continue': 'Amélioration continue et gestion visuelle',
+                'Matière': 'Matière',
+                'Standard': 'Respect du standard'
+            };
+
+            sectionOrder.forEach(sec => {
+                const qCount = (questionsData[sec] || []).length;
+                totalQ += qCount;
+                const okCount = (responses[sec] || []).filter(a => a === 'OK').length;
+                totalOK += okCount;
+                const percent = qCount ? Math.round((okCount/qCount)*100) : 0;
+                const line = document.createElement('div');
+                line.className = 'summary-item';
+                line.style.backgroundColor = getColorForPercent(percent);
+                const displayName = labelMap[sec] || sec;
+                line.innerHTML = `<span class="summary-title">${displayName}</span> OK <strong>${okCount}</strong> / ${qCount} (${percent}%)`;
+                questionsContainer.appendChild(line);
+            });
+
+            const summary = document.createElement('div');
+            summary.style.marginTop = '12px';
+            summary.style.fontWeight = '700';
+            summary.style.padding = '10px';
+            summary.style.borderRadius = '4px';
+            const percent = totalQ ? Math.round((totalOK/totalQ)*100) : 0;
+            summary.style.backgroundColor = getColorForPercent(percent);
+            summary.textContent = `Total OK: ${totalOK} / ${totalQ} (${percent}%)`;
+            questionsContainer.appendChild(summary);
+
+            // Submit button
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'next-button';
+            submitBtn.textContent = 'Submit';
+            submitBtn.style.marginTop = '12px';
+            submitBtn.onclick = function() { saveResults(totalOK, totalQ, percent); };
+            questionsContainer.appendChild(submitBtn);
+
+            questionsContainer.classList.add('active');
+        }
+
+        async function saveResults(totalOK, totalQ, percent) {
+            // Stocker les réponses par section comme JSON string (Firebase n'accepte pas les tableaux imbriqués)
+            const responsesNested = sectionOrder.map(section => {
+                const sectionResponses = responses[section] || [];
+                // Remplacer undefined par chaîne vide
+                return sectionResponses.map(r => r || '');
+            });
+            
+            // Stocker les discrepancies par section comme JSON string
+            const discrepanciesNested = sectionOrder.map(section => {
+                const sectionDiscrepancies = discrepancies[section] || [];
+                return sectionDiscrepancies
+                    .filter(d => d !== undefined && d !== null)
+                    .map(d => ({
+                        section: String(d.section || ''),
+                        question: String(d.question || ''),
+                        response: String(d.response || ''),
+                        action: String(d.action || ''),
+                        responsible: String(d.responsible || ''),
+                        deadline: String(d.deadline || '')
+                    }));
+            });
+            
+            console.log('Payload responses (nested):', responsesNested);
+            console.log('Payload discrepancies (nested):', discrepanciesNested);
+            
+            const payload = {
+                timestamp: new Date().toISOString(),
+                workstation: workstationSelect.value,
+                zone: zoneSelect.value,
+                machineNumber: machineNumberInput.value,
+                line: categorySelect.value,
+                // Stocker comme JSON strings pour éviter l'erreur Firebase
+                responsesJson: JSON.stringify(responsesNested),
+                discrepanciesJson: JSON.stringify(discrepanciesNested),
+                totalOK: totalOK,
+                totalQuestions: totalQ,
+                percentage: percent
+            };
+            
+            try {
+                await db.collection('results').add(payload);
+                // Le cache sera mis à jour par le listener onSnapshot
+            } catch (err) {
+                console.error('Erreur sauvegarde Firebase:', err);
+                alert('Erreur lors de la sauvegarde.');
+                return;
+            }
+            
+            // Reset forms after successful save
+            alert('Résultats sauvegardés avec succès.');
+            updateCategorySummaryChips(selectedDate);
+            updateTodayFocusAlert(selectedDate);
+            resetForms();
+        }
+
+        function resetForms() {
+            workstationSelect.value = '';
+            zoneSelect.innerHTML = '<option value="">-- Sélectionner la zone --</option>';
+            machineNumberInput.value = '';
+            machineNumberInput.classList.remove('active');
+            categorySelect.value = '';
+            categorySelect.classList.remove('active');
+            categorySelect.disabled = true;
+            document.getElementById('questionsContainer').innerHTML = '';
+            
+            // Reset responses object
+            Object.keys(responses).forEach(key => {
+                responses[key] = [];
+            });
+            Object.keys(discrepancies).forEach(key => {
+                discrepancies[key] = [];
+            });
+            currentSection = 0;
+        }
+
+        function parseDateFilter(dateFilter) {
+            if (!dateFilter) return null;
+            const parts = dateFilter.split('/');
+            if (parts.length !== 3) return null;
+
+            const day = Number(parts[0]);
+            const month = Number(parts[1]);
+            const year = Number(parts[2]);
+
+            if (!day || !month || !year) return null;
+
+            const parsed = new Date(year, month - 1, day);
+            if (isNaN(parsed.getTime())) return null;
+            return parsed;
+        }
+
+        function updateDate(dateFilter = null) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const selected = parseDateFilter(dateFilter);
+            const dateToShow = selected || new Date();
+            const dateString = dateToShow.toLocaleDateString('fr-FR', options);
+            document.getElementById('dateDisplay').textContent = dateString;
+        }
+
+        // ===== DASHBOARD FUNCTIONS =====
+        let charts = {};
+        let selectedDate = null;  // Store the selected date filter
+        let pdcaRows = [];
+        let pdcaCompletionStatus = {};
+
+        function getPDCACompletionKey(audit, sectionIndex, questionIndex) {
+            const lineValue = audit.line || audit.machineNumber || '';
+            return `${audit.timestamp || ''}|${audit.workstation || ''}|${lineValue}|${sectionIndex}|${questionIndex}`;
+        }
+
+        async function savePDCACompletionStatus() {
+            try {
+                // Firestore n'accepte pas les tableaux imbriqués
+                const flatStatus = {};
+                for (const key in pdcaCompletionStatus) {
+                    const val = pdcaCompletionStatus[key];
+                    flatStatus[key] = Array.isArray(val) ? val.flat() : val;
+                }
+                await db.collection('pdca_completion').doc('status').set(flatStatus);
+            } catch (err) {
+                console.error('Erreur sauvegarde PDCA completion:', err);
+                alert('Erreur lors de la sauvegarde PDCA');
+            }
+        }
+
+        function getPDCACompletionValue(key) {
+            return pdcaCompletionStatus[key] === 'completed' ? 'completed' : 'on going';
+        }
+
+        function getCompletionCellClass(status) {
+            return status === 'completed' ? 'pdca-completion-cell completed' : 'pdca-completion-cell';
+        }
+
+        function isDeadlineOverdue(deadlineValue) {
+            if (!deadlineValue) return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const deadlineDate = new Date(deadlineValue + 'T00:00:00');
+            if (isNaN(deadlineDate.getTime())) return false;
+            return deadlineDate < today;
+        }
+
+        function updatePDCACompletion(selectElement, completionKey) {
+            const status = selectElement.value === 'completed' ? 'completed' : 'on going';
+            pdcaCompletionStatus[completionKey] = status;
+            savePDCACompletionStatus();
+
+            renderPDCAFilteredRows();
+        }
+
+        function initDashboard() {
+            loadDateHistory();
+            loadAuditCategorySelect();
+            displayAverageByWorkstationChart();
+            updateCategorySummaryChips(selectedDate);
+
+            // GSAP animations dashboard
+            gsap.fromTo('.dashboard-container .chart-wrapper',
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 0.6, stagger: 0.2, delay: 0.15, ease: 'power2.out' }
+            );
+            gsap.fromTo('.date-filter-wrapper',
+                { opacity: 0, y: -15 },
+                { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+            );
+        }
+
+        function hideFocusAlert() {
+            focusAlert.style.display = 'none';
+            focusAlert.textContent = '';
+            focusSloganBanner.style.display = 'none';
+            focusSloganBanner.textContent = '';
+        }
+
+        function showFocusAlert(categoryLabel, percent, dateFilter = null) {
+            const slogans = {
+                '5S': 'Ensemble pour un atelier exemplaire',
+                'Qualité': 'Un défaut évité, un client satisfait',
+                'Sécurité': 'Ensemble pour un atelier sans accident',
+                'Amélioration continue': 'Ensemble vers le progrès continu',
+                'Equipement': 'Anticiper la panne, sécuriser la production',
+                'RH': 'Former aujourd’hui, performer demain',
+                'Matière': 'La bonne matière, au bon endroit, au bon moment'
+            };
+            const slogan = slogans[categoryLabel] || 'Ensemble vers l’excellence opérationnelle';
+            const todayStr = new Date().toLocaleDateString('fr-FR');
+            const focusPrefix = !dateFilter || dateFilter === todayStr
+                ? "Aujourd'hui focus"
+                : `Focus du ${dateFilter}`;
+            focusAlert.innerHTML = `<span class="focus-icon">😡</span><span class="focus-text">${focusPrefix} ${categoryLabel} (${percent.toFixed(1)}%)</span>`;
+            focusAlert.style.display = 'flex';
+
+            // GSAP animation pour l'alerte focus
+            gsap.fromTo(focusAlert,
+                { opacity: 0, y: -20, scale: 0.9 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.5)' }
+            );
+
+            focusSloganBanner.textContent = `"${slogan}"`;
+            focusSloganBanner.style.display = 'block';
+        }
+
+        function updateCategorySummaryChips(dateFilter = null) {
+            const labelMap = {
+                'Amélioration_continue': 'Amélioration continue',
+                'Matière': 'Matière',
+                'Standard': 'Standard'
+            };
+
+            categorySummaryBar.innerHTML = '';
+
+            const allData = cachedResults;
+            console.log('Chips - Total résultats:', allData.length, 'Date filter:', dateFilter);
+            
+            // Filtrer par date si spécifiée, sinon utiliser toutes les données
+            let filteredData = allData;
+            if (dateFilter) {
+                filteredData = allData.filter(audit => {
+                    const auditDate = new Date(audit.timestamp).toLocaleDateString('fr-FR');
+                    return auditDate === dateFilter;
+                });
+            }
+            
+            console.log('Chips - Données filtrées:', filteredData.length);
+
+            // Si pas de données, afficher 0% pour toutes les catégories
+            if (filteredData.length === 0) {
+                sectionOrder.forEach(section => {
+                    const chip = document.createElement('div');
+                    chip.className = 'category-chip';
+                    chip.textContent = `${labelMap[section] || section}: 0.0%`;
+                    categorySummaryBar.appendChild(chip);
+                });
+                gsap.fromTo('.category-chip',
+                    { opacity: 0, y: 15, scale: 0.9 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.08, ease: 'back.out(1.3)' }
+                );
+                return;
+            }
+
+            // Calculer le pourcentage par catégorie
+            sectionOrder.forEach((section, sectionIndex) => {
+                let okCount = 0;
+                let totalCount = 0;
+
+                filteredData.forEach(audit => {
+                    const responsesForCategory = audit.responses && audit.responses[sectionIndex];
+                    if (Array.isArray(responsesForCategory)) {
+                        okCount += responsesForCategory.filter(value => value === 'OK').length;
+                        totalCount += responsesForCategory.length;
+                    }
+                });
+
+                const percent = totalCount > 0 ? ((okCount / totalCount) * 100).toFixed(1) : '0.0';
+                const chip = document.createElement('div');
+                chip.className = 'category-chip';
+                chip.textContent = `${labelMap[section] || section}: ${percent}%`;
+                categorySummaryBar.appendChild(chip);
+            });
+
+            // GSAP stagger animation pour les chips
+            gsap.fromTo('.category-chip',
+                { opacity: 0, y: 15, scale: 0.9 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.08, ease: 'back.out(1.3)' }
+            );
+        }
+
+        function updateTodayFocusAlert(dateFilter = null) {
+            const allData = cachedResults;
+            const targetDate = dateFilter || new Date().toLocaleDateString('fr-FR');
+            const todayData = allData.filter(audit => {
+                const auditDate = new Date(audit.timestamp).toLocaleDateString('fr-FR');
+                return auditDate === targetDate;
+            });
+
+            if (todayData.length === 0) {
+                hideFocusAlert();
+                return;
+            }
+
+            const labelMap = {
+                'Amélioration_continue': 'Amélioration continue',
+                'Matière': 'Matière',
+                'Standard': 'Standard'
+            };
+
+            let lowestSection = null;
+            let lowestPercent = Number.POSITIVE_INFINITY;
+
+            sectionOrder.forEach((section, sectionIndex) => {
+                let okCount = 0;
+                let totalCount = 0;
+
+                todayData.forEach(audit => {
+                    const responsesForCategory = audit.responses && audit.responses[sectionIndex];
+                    if (Array.isArray(responsesForCategory)) {
+                        okCount += responsesForCategory.filter(value => value === 'OK').length;
+                        totalCount += responsesForCategory.length;
+                    }
+                });
+
+                if (totalCount === 0) return;
+
+                const percent = (okCount / totalCount) * 100;
+                if (percent < lowestPercent) {
+                    lowestPercent = percent;
+                    lowestSection = labelMap[section] || section;
+                }
+            });
+
+            if (!lowestSection || !isFinite(lowestPercent)) {
+                hideFocusAlert();
+                return;
+            }
+
+            showFocusAlert(lowestSection, lowestPercent, dateFilter);
+        }
+
+        function initPDCA() {
+            const allData = cachedResults;
+
+            const labelMap = {
+                'Amélioration_continue': 'Amélioration continue et gestion visuelle',
+                'Matière': 'Matière',
+                'Standard': 'Respect du standard'
+            };
+
+            pdcaRows = [];
+
+            allData.forEach(audit => {
+                const sectionValue = audit.workstation || '';
+                const lineValue = audit.line || audit.machineNumber || '';
+                const dateValue = new Date(audit.timestamp).toLocaleString('fr-FR');
+                const dateOnlyValue = new Date(audit.timestamp).toLocaleDateString('fr-FR');
+                const responsesBySection = Array.isArray(audit.responses) ? audit.responses : [];
+                const discrepancyBySection = Array.isArray(audit.discrepancies) ? audit.discrepancies : [];
+
+                sectionOrder.forEach((category, sectionIndex) => {
+                    const responsesList = Array.isArray(responsesBySection[sectionIndex]) ? responsesBySection[sectionIndex] : [];
+                    const discrepancyList = Array.isArray(discrepancyBySection[sectionIndex]) ? discrepancyBySection[sectionIndex] : [];
+
+                    responsesList.forEach((answer, questionIndex) => {
+                        if (answer !== 'NOK') return;
+
+                        const details = discrepancyList[questionIndex] || {};
+                        const completionKey = getPDCACompletionKey(audit, sectionIndex, questionIndex);
+                        pdcaRows.push({
+                            timestamp: audit.timestamp || '',
+                            date: dateValue,
+                            dateOnly: dateOnlyValue,
+                            section: sectionValue,
+                            line: lineValue,
+                            category: labelMap[category] || category,
+                            description: details.description || '',
+                            cause: details.cause || '',
+                            action: details.action || '',
+                            pilote: details.pilote || '',
+                            deadline: details.deadline || '',
+                            photoData: details.photoData || '',
+                            completionKey: completionKey
+                        });
+                    });
+                });
+            });
+
+            pdcaRows.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            populatePDCAFilterOptions();
+            renderPDCAFilteredRows();
+        }
+
+        function setupPDCAFilters() {
+            const filterIds = [
+                'pdcaFilterSection',
+                'pdcaFilterPilote',
+                'pdcaFilterDate',
+            ];
+
+            filterIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) return;
+                element.addEventListener('change', renderPDCAFilteredRows);
+            });
+        }
+
+        function populatePDCAFilterOptions() {
+            const sectionSelect = document.getElementById('pdcaFilterSection');
+            const piloteSelect = document.getElementById('pdcaFilterPilote');
+            const dateSelect = document.getElementById('pdcaFilterDate');
+            const exportDateSelect = document.getElementById('pdcaExportDate');
+
+            const currentValues = {
+                section: sectionSelect.value,
+                pilote: piloteSelect.value,
+                date: dateSelect.value,
+                exportDate: exportDateSelect.value
+            };
+
+            const uniqueSections = Array.from(new Set(pdcaRows.map(row => row.section).filter(Boolean))).sort();
+            const uniquePilotes = Array.from(new Set(pdcaRows.map(row => row.pilote).filter(Boolean))).sort();
+            const uniqueDates = Array.from(new Set(pdcaRows.map(row => row.dateOnly).filter(Boolean))).sort((a, b) => new Date(b) - new Date(a));
+
+            sectionSelect.innerHTML = '<option value="">Toutes les sections</option>';
+            piloteSelect.innerHTML = '<option value="">Tous les pilotes</option>';
+            dateSelect.innerHTML = '<option value="">Toutes les dates</option>';
+            exportDateSelect.innerHTML = '<option value="">-- Sélectionner une date --</option>';
+
+            uniqueSections.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                sectionSelect.appendChild(option);
+            });
+            uniquePilotes.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                piloteSelect.appendChild(option);
+            });
+            uniqueDates.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                dateSelect.appendChild(option);
+
+                const exportOption = document.createElement('option');
+                exportOption.value = value;
+                exportOption.textContent = value;
+                exportDateSelect.appendChild(exportOption);
+            });
+
+            if (currentValues.section) sectionSelect.value = currentValues.section;
+            if (currentValues.pilote) piloteSelect.value = currentValues.pilote;
+            if (currentValues.date) dateSelect.value = currentValues.date;
+            if (currentValues.exportDate) exportDateSelect.value = currentValues.exportDate;
+        }
+
+        function exportPDCAByDate() {
+            const exportDateSelect = document.getElementById('pdcaExportDate');
+            const selectedDate = exportDateSelect.value || '';
+
+            if (!selectedDate) {
+                alert('Veuillez sélectionner une date à exporter.');
+                return;
+            }
+
+            const rowsToExport = pdcaRows.filter(row => row.dateOnly === selectedDate);
+            if (rowsToExport.length === 0) {
+                alert('Aucune donnée PDCA disponible pour la date sélectionnée.');
+                return;
+            }
+
+            if (typeof XLSX === 'undefined') {
+                alert('Librairie Excel non disponible.');
+                return;
+            }
+
+            const headers = [
+                'Date',
+                'Section',
+                'Ligne',
+                'Catégorie',
+                'Écart',
+                'Cause',
+                'Action',
+                'Pilote',
+                'Deadline',
+                'Completion'
+            ];
+
+            const excelRows = [headers];
+
+            rowsToExport.forEach(row => {
+                const completionStatus = getPDCACompletionValue(row.completionKey);
+                const values = [
+                    row.date,
+                    row.section,
+                    row.line,
+                    row.category,
+                    row.description,
+                    row.cause,
+                    row.action,
+                    row.pilote,
+                    row.deadline,
+                    completionStatus
+                ];
+                excelRows.push(values);
+            });
+
+            const safeDate = selectedDate.replace(/[\\/:*?"<>|]/g, '-');
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(excelRows);
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'PDCA');
+            XLSX.writeFile(workbook, `PDCA_${safeDate}.xlsx`);
+        }
+
+        function renderPDCAFilteredRows() {
+            const table = document.getElementById('pdcaTable');
+            const tableBody = document.getElementById('pdcaTableBody');
+            const emptyMessage = document.getElementById('pdcaEmpty');
+            const deadlineBanner = document.getElementById('pdcaDeadlineBanner');
+
+            const filters = {
+                section: document.getElementById('pdcaFilterSection').value || '',
+                pilote: document.getElementById('pdcaFilterPilote').value || '',
+                date: document.getElementById('pdcaFilterDate').value || ''
+            };
+
+            if (pdcaRows.length > 0 && !filters.section && !filters.pilote && !filters.date) {
+                tableBody.innerHTML = '';
+                table.style.display = 'none';
+                emptyMessage.textContent = 'Sélectionner au moins Section, Pilote ou Date pour afficher le tableau PDCA.';
+                deadlineBanner.style.display = 'none';
+                deadlineBanner.textContent = '';
+                return;
+            }
+
+            const filteredRows = pdcaRows.filter(row => {
+                if (filters.section && row.section !== filters.section) return false;
+                if (filters.pilote && row.pilote !== filters.pilote) return false;
+                if (filters.date && row.dateOnly !== filters.date) return false;
+                return true;
+            });
+
+            tableBody.innerHTML = '';
+
+            if (filteredRows.length === 0) {
+                table.style.display = 'none';
+                emptyMessage.textContent = pdcaRows.length === 0
+                    ? 'Aucun écart NOK enregistré pour le moment.'
+                    : 'Aucune ligne ne correspond aux filtres.';
+                deadlineBanner.style.display = 'none';
+                deadlineBanner.textContent = '';
+                return;
+            }
+
+            let overdueCount = 0;
+            filteredRows.forEach(row => {
+                const tr = document.createElement('tr');
+                const completionStatus = getPDCACompletionValue(row.completionKey);
+                const isOverdue = completionStatus !== 'completed' && isDeadlineOverdue(row.deadline);
+                if (isOverdue) overdueCount++;
+                tr.innerHTML = `
+                    <td>${row.date || '-'}</td>
+                    <td>${row.section || '-'}</td>
+                    <td>${row.line || '-'}</td>
+                    <td>${row.category || '-'}</td>
+                    <td>
+                        <div>${row.description || '-'}</div>
+                        ${row.photoData ? '<img src="' + row.photoData + '" class="pdca-photo" alt="Photo écart">' : ''}
+                    </td>
+                    <td>${row.cause || '-'}</td>
+                    <td>${row.action || '-'}</td>
+                    <td>${row.pilote || '-'}</td>
+                    <td class="${isOverdue ? 'pdca-deadline-alert' : ''}">${row.deadline || '-'}</td>
+                    <td class="${getCompletionCellClass(completionStatus)}">
+                        <select class="pdca-completion-select" onchange="updatePDCACompletion(this, '${row.completionKey}')">
+                            <option value="on going" ${completionStatus === 'on going' ? 'selected' : ''}>on going</option>
+                            <option value="completed" ${completionStatus === 'completed' ? 'selected' : ''}>completed</option>
+                        </select>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            emptyMessage.textContent = '';
+            table.style.display = 'table';
+
+            // GSAP animation pour les lignes PDCA
+            gsap.fromTo(tableBody.querySelectorAll('tr'),
+                { opacity: 0, x: -15 },
+                { opacity: 1, x: 0, duration: 0.3, stagger: 0.04, ease: 'power2.out' }
+            );
+
+            if (overdueCount > 0) {
+                deadlineBanner.textContent = `Alerte: ${overdueCount} deadline(s) dépassée(s).`;
+                deadlineBanner.style.display = 'block';
+            } else {
+                deadlineBanner.style.display = 'none';
+                deadlineBanner.textContent = '';
+            }
+        }
+
+        setupPDCAFilters();
+        document.getElementById('pdcaExportButton').addEventListener('click', exportPDCAByDate);
+        window.updatePDCACompletion = updatePDCACompletion;
+
+        function loadDateHistory() {
+            const allData = cachedResults;
+            const dateHistorySelect = document.getElementById('dateHistorySelect');
+            
+            // Extract unique dates
+            const uniqueDates = new Set();
+            allData.forEach(audit => {
+                const date = new Date(audit.timestamp).toLocaleDateString('fr-FR');
+                uniqueDates.add(date);
+            });
+
+            // Sort dates in descending order (newest first)
+            const sortedDates = Array.from(uniqueDates).sort((a, b) => {
+                return new Date(b) - new Date(a);
+            });
+
+            // Clear previous options except the first one
+            dateHistorySelect.innerHTML = '<option value="">-- Toutes les dates --</option>';
+
+            // Add date options
+            sortedDates.forEach(date => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.textContent = date;
+                dateHistorySelect.appendChild(option);
+            });
+
+            // Add listener for date selection
+            dateHistorySelect.addEventListener('change', function() {
+                selectedDate = this.value || null;
+                // Refresh both charts when date is selected
+                displayAverageByWorkstationChart(selectedDate);
+                updateChartByLineForCategoryAndWorkstation();
+                updateCategorySummaryChips(selectedDate);
+                updateTodayFocusAlert(selectedDate);
+                updateDate(selectedDate);
+            });
+        }
+
+        function loadAuditCategorySelect() {
+            const categorySelect = document.getElementById('auditCategorySelect');
+            categorySelect.innerHTML = '<option value="">-- Sélectionner une catégorie d\'audit --</option>';
+            
+            sectionOrder.forEach(section => {
+                const option = document.createElement('option');
+                option.value = section;
+                option.textContent = section;
+                categorySelect.appendChild(option);
+            });
+
+            categorySelect.addEventListener('change', function() {
+                updateChartByLineForCategoryAndWorkstation();
+            });
+        }
+
+        function updateChartByLineForCategoryAndWorkstation() {
+            const categorySelect = document.getElementById('auditCategorySelect');
+            const category = categorySelect.value;
+
+            if (category) {
+                displayChartByLineForCategoryAndWorkstation(category);
+            } else {
+                if (charts.chartByLine) {
+                    charts.chartByLine.destroy();
+                }
+                document.getElementById('chartByLine').style.display = 'none';
+            }
+        }
+
+        function displayChartByLineForCategoryAndWorkstation(auditCategory) {
+            const categoryIndex = sectionOrder.indexOf(auditCategory);
+            
+            // Si aucune date n'est sélectionnée, afficher un graphe vide (0%)
+            let filteredData = [];
+            if (selectedDate) {
+                const allData = cachedResults;
+                filteredData = allData.filter(audit => {
+                    const auditDate = new Date(audit.timestamp).toLocaleDateString('fr-FR');
+                    return auditDate === selectedDate;
+                });
+            }
+            
+            // Afficher le canvas
+            document.getElementById('chartByLine').style.display = 'block';
+            
+            const sectionStats = {};
+
+            ['CRA', 'WPA', 'X1310_PDB', 'X1310_BODY', 'X1310_EGR', 'ENGINE', 'Smalls_NISSAN'].forEach(ws => {
+                sectionStats[ws] = { ok: 0, total: 0 };
+            });
+
+            filteredData.forEach(audit => {
+                const section = audit.workstation || 'Non spécifiée';
+                if (!sectionStats[section]) {
+                    sectionStats[section] = { ok: 0, total: 0 };
+                }
+
+                if (audit.responses[categoryIndex] && Array.isArray(audit.responses[categoryIndex])) {
+                    const okCount = audit.responses[categoryIndex].filter(r => r === 'OK').length;
+                    sectionStats[section].ok += okCount;
+                    sectionStats[section].total += audit.responses[categoryIndex].length;
+                }
+            });
+
+            const orderedSections = ['CRA', 'WPA', 'X1310_PDB', 'X1310_BODY', 'X1310_EGR', 'ENGINE', 'Smalls_NISSAN'];
+            const labels = [];
+            const percentages = [];
+
+            orderedSections.forEach(label => {
+                labels.push(label);
+                const stats = sectionStats[label] || { ok: 0, total: 0 };
+                const percent = stats.total > 0 ? (stats.ok / stats.total * 100).toFixed(1) : 0;
+                percentages.push(percent);
+            });
+
+            const ctx = document.getElementById('chartByLine').getContext('2d');
+            
+            if (charts.chartByLine) {
+                charts.chartByLine.destroy();
+            }
+
+            charts.chartByLine = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Moyenne ' + auditCategory + ' par section',
+                        data: percentages,
+                        backgroundColor: percentages.map(p => getColorForPercent(p)),
+                        borderColor: '#002857',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#002857',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayAverageByWorkstationChart(dateFilter = null) {
+            // Si aucune date n'est sélectionnée, afficher TOUTES les données
+            const allData = cachedResults;
+            console.log('Chart data - Total résultats:', allData.length, 'Date filter:', dateFilter);
+            
+            let filteredData = [];
+            if (dateFilter) {
+                filteredData = allData.filter(audit => {
+                    const auditDate = new Date(audit.timestamp).toLocaleDateString('fr-FR');
+                    return auditDate === dateFilter;
+                });
+            } else {
+                // Pas de filtre = afficher toutes les données
+                filteredData = allData;
+            }
+            
+            console.log('Chart data - Données filtrées:', filteredData.length);
+            
+            const workstationStats = {};
+
+            // Initialiser les statistiques par workstation
+            ['CRA', 'WPA', 'X1310_PDB', 'X1310_BODY', 'X1310_EGR', 'ENGINE', 'Smalls_NISSAN'].forEach(ws => {
+                workstationStats[ws] = { ok: 0, total: 0 };
+            });
+
+            // Compter les réponses OK par workstation
+            // Utiliser totalOK et totalQuestions stockés dans chaque audit
+            filteredData.forEach(audit => {
+                const workstation = audit.workstation;
+                console.log('Processing audit:', workstation, 'totalOK:', audit.totalOK, 'totalQ:', audit.totalQuestions);
+                if (workstationStats[workstation]) {
+                    workstationStats[workstation].ok += (audit.totalOK || 0);
+                    workstationStats[workstation].total += (audit.totalQuestions || 0);
+                }
+            });
+            
+            console.log('Workstation stats:', workstationStats);
+
+            const labels = [];
+            const percentages = [];
+
+            ['CRA', 'WPA', 'X1310_PDB', 'X1310_BODY', 'X1310_EGR', 'ENGINE', 'Smalls_NISSAN'].forEach(ws => {
+                labels.push(ws);
+                const stats = workstationStats[ws];
+                const percent = stats.total > 0 ? (stats.ok / stats.total * 100).toFixed(1) : 0;
+                percentages.push(percent);
+            });
+
+            const ctx = document.getElementById('chartMoyenne').getContext('2d');
+            
+            if (charts.chartMoyenne) {
+                charts.chartMoyenne.destroy();
+            }
+
+            charts.chartMoyenne = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Moyenne par Section (%)',
+                        data: percentages,
+                        backgroundColor: percentages.map(p => getColorForPercent(p)),
+                        borderColor: '#002857',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#002857',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===== ROBOT ANIMATIONS =====
+        let isPasswordFocused = false;
+
+        function robotBlink() {
+            const tl = gsap.timeline({ repeat: -1, repeatDelay: 2.2 });
+            // Double blink naturel
+            tl.to('#eyelidL, #eyelidR', { height: '110%', duration: 0.1, ease: 'power2.in' })
+              .to('#eyelidL, #eyelidR', { height: '0%', duration: 0.12, ease: 'power2.out' }, '+=0.06')
+              .to('#eyelidL, #eyelidR', { height: '110%', duration: 0.08, ease: 'power2.in' }, '+=0.08')
+              .to('#eyelidL, #eyelidR', { height: '0%', duration: 0.12, ease: 'power2.out' }, '+=0.05');
+            return tl;
+        }
+
+        // Idle breathing animation
+        function robotIdle() {
+            gsap.to('.robot', {
+                y: -3, duration: 1.5, ease: 'sine.inOut', yoyo: true, repeat: -1
+            });
+            gsap.to('.robot-antenna', {
+                rotation: 3, duration: 2, ease: 'sine.inOut', yoyo: true, repeat: -1, transformOrigin: 'bottom center'
+            });
+        }
+
+        function robotLookAt(inputEl) {
+            if (!inputEl) return;
+            inputEl.addEventListener('focus', () => {
+                if (isPasswordFocused) return;
+                // Yeux s'agrandissent légèrement avec intérêt
+                gsap.to('.robot-eye', { scale: 1.1, duration: 0.3, ease: 'back.out(1.5)' });
+                gsap.to('#pupilL, #pupilR', { y: 2, scale: 1.15, duration: 0.3, ease: 'power2.out' });
+                // Tête se penche légèrement
+                gsap.to('.robot-head', { rotation: 2, duration: 0.4, ease: 'power2.out' });
+            });
+            inputEl.addEventListener('blur', () => {
+                if (isPasswordFocused) return;
+                gsap.to('.robot-eye', { scale: 1, duration: 0.3, ease: 'power2.out' });
+                gsap.to('#pupilL, #pupilR', { y: 0, x: 0, scale: 1, duration: 0.3, ease: 'power2.out' });
+                gsap.to('.robot-head', { rotation: 0, duration: 0.4, ease: 'power2.out' });
+            });
+            inputEl.addEventListener('input', () => {
+                if (isPasswordFocused) return;
+                const rect = inputEl.getBoundingClientRect();
+                const robotRect = document.querySelector('.robot-head').getBoundingClientRect();
+                const dx = (rect.left + rect.width / 2 - (robotRect.left + robotRect.width / 2)) / 25;
+                const clampedX = Math.max(-4, Math.min(4, dx));
+                gsap.to('#pupilL, #pupilR', { x: clampedX, duration: 0.15, ease: 'power1.out' });
+                // Tête suit légèrement
+                gsap.to('.robot-head', { rotation: clampedX * 0.5, duration: 0.2, ease: 'power1.out' });
+            });
+        }
+
+        // Robot couvre ses yeux avec ses mains quand on tape le mot de passe
+        function robotCoverEyes(passwordInput) {
+            if (!passwordInput) return;
+            const mouth = document.getElementById('robotMouth');
+
+            passwordInput.addEventListener('focus', () => {
+                isPasswordFocused = true;
+                blinkTimeline.pause();
+
+                // Tête recule un peu (surpris)
+                gsap.to('.robot-head', {
+                    y: -3, rotation: 0, duration: 0.2, ease: 'power2.out',
+                    onComplete: () => {
+                        gsap.to('.robot-head', { y: 0, duration: 0.3, ease: 'bounce.out' });
+                    }
+                });
+
+                // Main gauche glisse vers le centre pour couvrir l'oeil gauche
+                gsap.to('#handLeft', {
+                    x: 30,
+                    y: -3,
+                    rotation: 12,
+                    scale: 1.15,
+                    duration: 0.45,
+                    ease: 'back.out(1.4)'
+                });
+                // Main droite glisse vers le centre pour couvrir l'oeil droit
+                gsap.to('#handRight', {
+                    x: -30,
+                    y: -3,
+                    rotation: -12,
+                    scale: 1.15,
+                    duration: 0.45,
+                    delay: 0.05,
+                    ease: 'back.out(1.4)'
+                });
+                // Fermer les yeux derrière les mains
+                gsap.to('#eyelidL, #eyelidR', { height: '110%', duration: 0.2, delay: 0.15, ease: 'power2.in' });
+                // Yeux taille normale
+                gsap.to('.robot-eye', { scale: 1, duration: 0.2 });
+                // Sourire timide
+                mouth.classList.add('happy');
+                gsap.fromTo(mouth, { scale: 0.8 }, { scale: 1, duration: 0.3, delay: 0.15, ease: 'back.out(2)' });
+            });
+
+            passwordInput.addEventListener('blur', () => {
+                isPasswordFocused = false;
+
+                // Mains retournent à leur position avec effet élastique
+                gsap.to('#handLeft', {
+                    x: 0, y: 0,
+                    rotation: 0,
+                    scale: 1,
+                    duration: 0.55,
+                    ease: 'elastic.out(1, 0.6)'
+                });
+                gsap.to('#handRight', {
+                    x: 0, y: 0,
+                    rotation: 0,
+                    scale: 1,
+                    duration: 0.55,
+                    delay: 0.05,
+                    ease: 'elastic.out(1, 0.6)'
+                });
+                // Rouvrir les yeux un par un
+                gsap.to('#eyelidL', { height: '0%', duration: 0.3, delay: 0.2, ease: 'power2.out' });
+                gsap.to('#eyelidR', { height: '0%', duration: 0.3, delay: 0.3, ease: 'power2.out' });
+                mouth.classList.remove('happy');
+                blinkTimeline.resume();
+            });
+
+            // Rebond des mains + tremblement à chaque frappe
+            passwordInput.addEventListener('input', () => {
+                const tl = gsap.timeline();
+                tl.to('#handLeft, #handRight', {
+                    scale: 1.25, duration: 0.07, ease: 'power2.out'
+                }).to('#handLeft, #handRight', {
+                    scale: 1.15, duration: 0.15, ease: 'elastic.out(1, 0.4)'
+                });
+                // Tremblement de la tête
+                tl.to('.robot-head', { x: 1.5, duration: 0.04 }, 0)
+                  .to('.robot-head', { x: -1.5, duration: 0.04 }, 0.04)
+                  .to('.robot-head', { x: 0, duration: 0.06, ease: 'power2.out' }, 0.08);
+            });
+        }
+
+        function robotAngry() {
+            const mouth = document.getElementById('robotMouth');
+            const speech = document.getElementById('robotSpeech');
+            blinkTimeline.pause();
+
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    // Retour à la normale
+                    mouth.classList.remove('angry');
+                    document.querySelectorAll('.robot-eye').forEach(e => e.classList.remove('angry-eye'));
+                    gsap.to('#eyebrowL, #eyebrowR', { opacity: 0, duration: 0.3 });
+                    gsap.to('.robot-eye', { scaleY: 1, duration: 0.3, ease: 'power2.out' });
+                    gsap.to('#pupilL, #pupilR', { y: 0, scale: 1, duration: 0.3 });
+                    gsap.to('.robot-head', { rotation: 0, y: 0, duration: 0.3, ease: 'power2.out' });
+                    gsap.to('.robot-antenna::after', { clearProps: 'all' });
+                    gsap.to(speech, { opacity: 0, duration: 0.3, onComplete: () => { speech.textContent = ''; } });
+                    blinkTimeline.resume();
+                }
+            });
+
+            // Sourcils en colère apparaissent
+            tl.to('#eyebrowL, #eyebrowR', { opacity: 1, duration: 0.15 }, 0);
+
+            // Yeux se plissent (squint)
+            tl.to('.robot-eye', { scaleY: 0.6, duration: 0.2, ease: 'power2.in' }, 0);
+            tl.call(() => {
+                document.querySelectorAll('.robot-eye').forEach(e => e.classList.add('angry-eye'));
+            }, [], 0);
+
+            // Pupilles se rétrécissent (colère concentrée)
+            tl.to('#pupilL, #pupilR', { scale: 0.7, y: 1, duration: 0.2 }, 0);
+
+            // Bouche en colère
+            tl.call(() => {
+                mouth.classList.remove('happy');
+                mouth.classList.add('angry');
+            }, [], 0.1);
+
+            // Tête secoue violemment (non non non !)
+            tl.to('.robot-head', { rotation: -8, duration: 0.08 }, 0.2)
+              .to('.robot-head', { rotation: 8, duration: 0.08 }, 0.28)
+              .to('.robot-head', { rotation: -6, duration: 0.08 }, 0.36)
+              .to('.robot-head', { rotation: 6, duration: 0.08 }, 0.44)
+              .to('.robot-head', { rotation: -3, duration: 0.08 }, 0.52)
+              .to('.robot-head', { rotation: 0, duration: 0.1, ease: 'power2.out' }, 0.6);
+
+            // Antenne pulse rouge
+            tl.to('.robot-antenna::after', {
+                boxShadow: '0 0 14px rgba(198,40,40,0.9), 0 0 30px rgba(198,40,40,0.5)',
+                background: '#c62828',
+                duration: 0.2
+            }, 0.1);
+
+            // Carte shake
+            tl.to('.auth-card', {
+                x: 10, duration: 0.05, repeat: 7, yoyo: true, ease: 'power2.inOut',
+                onComplete: () => gsap.set('.auth-card', { x: 0 })
+            }, 0.2);
+
+            // Robot tout entier tremble
+            tl.to('.robot', {
+                y: -5, duration: 0.1, ease: 'power2.out'
+            }, 0.15)
+            .to('.robot', {
+                y: 0, duration: 0.2, ease: 'bounce.out'
+            }, 0.25);
+
+            // Bulle de parole "Non ! 😤"
+            tl.set(speech, { opacity: 1, scale: 0, textContent: '' }, 0.25)
+              .to(speech, { scale: 1, duration: 0.3, ease: 'back.out(2.5)' }, 0.25)
+              .call(() => { speech.textContent = 'Non ! 😤'; }, [], 0.35);
+
+            // Mains frappent (tapent sur les côtés)
+            tl.to('#handLeft', { x: -8, y: -5, rotation: -15, duration: 0.15, ease: 'power2.out' }, 0.2)
+              .to('#handLeft', { x: 0, y: 0, rotation: 0, duration: 0.3, ease: 'elastic.out(1, 0.5)' }, 0.5);
+            tl.to('#handRight', { x: 8, y: -5, rotation: 15, duration: 0.15, ease: 'power2.out' }, 0.25)
+              .to('#handRight', { x: 0, y: 0, rotation: 0, duration: 0.3, ease: 'elastic.out(1, 0.5)' }, 0.55);
+
+            // Durée totale avant reset = ~2.5s
+            tl.to({}, { duration: 1.5 });
+        }
+
+        function robotWelcome(name, callback) {
+            const speech = document.getElementById('robotSpeech');
+            const mouth = document.getElementById('robotMouth');
+            const welcomeText = `Bienvenue ${name} ! 👋`;
+
+            blinkTimeline.pause();
+            mouth.classList.add('happy');
+
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    gsap.to(speech, {
+                        opacity: 0, y: -15, scale: 0.9, duration: 0.5, delay: 1,
+                        ease: 'power2.in',
+                        onComplete: () => {
+                            speech.textContent = '';
+                            mouth.classList.remove('happy');
+                            blinkTimeline.resume();
+                            if (callback) callback();
+                        }
+                    });
+                }
+            });
+
+            // Yeux grands ouverts + étincelants
+            tl.to('.robot-eye', { scale: 1.2, duration: 0.2, ease: 'back.out(2)' }, 0);
+            tl.to('#pupilL, #pupilR', { scale: 0.7, duration: 0.15 }, 0)
+              .to('#pupilL, #pupilR', { scale: 1.2, duration: 0.3, ease: 'elastic.out(1, 0.5)' }, 0.15);
+
+            // Bulle de dialogue apparaît
+            tl.set(speech, { opacity: 1, scale: 0, y: 5 }, 0.1)
+              .to(speech, { scale: 1, y: 0, duration: 0.4, ease: 'back.out(2.5)' }, 0.1);
+
+            // Typing effet
+            let currentText = '';
+            for (let i = 0; i < welcomeText.length; i++) {
+                tl.call(() => {
+                    currentText += welcomeText[currentText.length];
+                    speech.textContent = currentText;
+                }, [], `>+${i === 0 ? 0.15 : 0.04}`);
+            }
+
+            // Happy bounce séquence
+            tl.to('.robot', { y: -12, duration: 0.25, ease: 'power2.out' }, 0.15)
+              .to('.robot', { y: 0, duration: 0.4, ease: 'bounce.out' }, 0.4)
+              .to('.robot', { y: -6, duration: 0.2, ease: 'power2.out' }, 0.9)
+              .to('.robot', { y: 0, duration: 0.3, ease: 'bounce.out' }, 1.1);
+
+            // Mains font coucou
+            tl.to('#handRight', { rotation: -30, y: -30, x: -15, duration: 0.3, ease: 'power2.out' }, 0.5)
+              .to('#handRight', { rotation: 15, duration: 0.15 }, 0.8)
+              .to('#handRight', { rotation: -25, duration: 0.15 }, 0.95)
+              .to('#handRight', { rotation: 10, duration: 0.15 }, 1.1)
+              .to('#handRight', { rotation: 0, y: 0, x: 0, duration: 0.4, ease: 'power2.out' }, 1.3);
+
+            // Yeux retour normal
+            tl.to('.robot-eye', { scale: 1, duration: 0.3 }, 1.4);
+            tl.to('#pupilL, #pupilR', { scale: 1, duration: 0.3 }, 1.4);
+        }
+
+        // Initialize robot
+        const blinkTimeline = robotBlink();
+        robotIdle();
+        robotLookAt(document.getElementById('loginMatricule'));
+        robotLookAt(document.getElementById('signupMatricule'));
+        robotLookAt(document.getElementById('signupNom'));
+        robotLookAt(document.getElementById('signupPrenom'));
+        robotCoverEyes(document.getElementById('loginPassword'));
+        robotCoverEyes(document.getElementById('signupPassword'));
+        robotCoverEyes(document.getElementById('signupPasswordConfirm'));
+
+        // Afficher la date au chargement
+        updateDate(selectedDate);
+        updateCategorySummaryChips(selectedDate);
+        updateTodayFocusAlert(selectedDate);
+
+        // GSAP - Animation d'entrée de la page de connexion
+        const loginEntrance = gsap.timeline({ delay: 0.1 });
+        
+        loginEntrance
+            // Logos glissent depuis les côtés
+            .fromTo('.auth-login-logo-left',
+                { opacity: 0, x: -80, rotation: -10 },
+                { opacity: 1, x: 0, rotation: 0, duration: 0.8, ease: 'back.out(1.3)' }, 0
+            )
+            .fromTo('.auth-login-logo',
+                { opacity: 0, x: 80, rotation: 10 },
+                { opacity: 1, x: 0, rotation: 0, duration: 0.8, ease: 'back.out(1.3)' }, 0
+            )
+            // Robot tombe d'en haut avec rebond
+            .fromTo('.robot-container',
+                { opacity: 0, y: -60, scale: 0.5 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'bounce.out' }, 0.2
+            )
+            // Carte monte avec effet spring
+            .fromTo('.auth-card',
+                { opacity: 0, y: 80, scale: 0.85 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'elastic.out(1, 0.7)' }, 0.4
+            )
+            // Titre + tabs + inputs en cascade
+            .fromTo('.auth-title',
+                { opacity: 0, y: -20, scale: 0.9 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.5)' }, 0.7
+            )
+            .fromTo('.auth-tab',
+                { opacity: 0, y: 15, scale: 0.9 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.12, ease: 'back.out(1.8)' }, 0.8
+            )
+            .fromTo('.auth-form.active input, .auth-form.active .auth-submit',
+                { opacity: 0, x: -25, scale: 0.95 },
+                { opacity: 1, x: 0, scale: 1, duration: 0.4, stagger: 0.1, ease: 'power3.out' }, 0.95
+            )
+            // Crédit apparaît en fondu
+            .fromTo('.app-credit',
+                { opacity: 0 },
+                { opacity: 0.85, duration: 1.2, ease: 'power2.out' }, 1.3
+            );
+
+        // Mettre à jour la date tous les jours à minuit
+        setInterval(function() {
+            if (!selectedDate) {
+                updateDate();
+                updateTodayFocusAlert();
+            }
+        }, 1000);
+
+        // ===== INITIALISATION ASYNC - Charger Firebase et cacher l'overlay =====
+        function hideOverlayAndStart() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay.style.display === 'none') return; // déjà caché
+            overlay.style.transition = 'opacity 0.4s';
+            overlay.style.opacity = '0';
+            setTimeout(() => { overlay.style.display = 'none'; }, 400);
+
+            // Vérifier la session
+            const currentSession = JSON.parse(localStorage.getItem('gemba_session') || 'null');
+            if (currentSession && currentSession.matricule) {
+                showApp();
+            } else {
+                showAuth();
+                loginEntrance.play();
+            }
+
+            // Mettre à jour les données affichées
+            updateDate(selectedDate);
+            updateCategorySummaryChips(selectedDate);
+            updateTodayFocusAlert(selectedDate);
+        }
+
+        // Timeout de sécurité : si Firebase ne répond pas en 5s, on lance quand même l'app
+        const safetyTimeout = setTimeout(() => {
+            console.warn('Firebase timeout - lancement sans données cloud');
+            hideOverlayAndStart();
+        }, 5000);
+
+        // Helper function to parse JSON fields from Firebase
+        function parseAuditData(data) {
+            return {
+                ...data,
+                // Parser les JSON strings en tableaux
+                responses: data.responsesJson ? JSON.parse(data.responsesJson) : (data.responses || []),
+                discrepancies: data.discrepanciesJson ? JSON.parse(data.discrepanciesJson) : (data.discrepancies || [])
+            };
+        }
+
+        async function initApp() {
+            try {
+                console.log('Initialisation Firebase...');
+                // Charger les résultats depuis Firestore avec timeout
+                const resultsSnap = await db.collection('results').get();
+                cachedResults = resultsSnap.docs.map(doc => parseAuditData(doc.data()));
+                console.log('Résultats chargés:', cachedResults.length);
+                if (cachedResults.length > 0) {
+                    console.log('Premier résultat:', cachedResults[0]);
+                }
+
+                // Charger les PDCA completion status
+                const pdcaDoc = await db.collection('pdca_completion').doc('status').get();
+                if (pdcaDoc.exists) {
+                    pdcaCompletionStatus = pdcaDoc.data();
+                }
+
+                // Écouter les changements en temps réel sur les résultats
+                db.collection('results').onSnapshot(snapshot => {
+                    cachedResults = snapshot.docs.map(doc => parseAuditData(doc.data()));
+                    initDashboard(); // Rafraîchir les graphiques dashboard
+                });
+
+                console.log('Firebase chargé avec succès:', cachedResults.length, 'résultats');
+            } catch (err) {
+                console.error('Erreur initialisation Firebase:', err);
+            }
+
+            // Annuler le timeout de sécurité et lancer l'app
+            clearTimeout(safetyTimeout);
+            hideOverlayAndStart();
+        }
+
+        // Pause l'animation login au départ (sera lancée par initApp)
+        loginEntrance.pause();
+
+        // Lancer l'app
+        initApp();
+    </script>
+</body>
+</html>
