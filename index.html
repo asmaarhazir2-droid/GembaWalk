@@ -2472,18 +2472,30 @@
             const allData = cachedResults;
             console.log('Chips - Total résultats:', allData.length, 'Date filter:', dateFilter);
             
-            // Filtrer par date si spécifiée, sinon utiliser toutes les données
-            let filteredData = allData;
-            if (dateFilter) {
-                filteredData = allData.filter(audit => {
-                    const auditDate = new Date(audit.timestamp).toLocaleDateString('fr-FR');
-                    return auditDate === dateFilter;
+            // Si aucune date n'est sélectionnée, afficher 0% pour toutes les catégories
+            if (!dateFilter) {
+                sectionOrder.forEach(section => {
+                    const chip = document.createElement('div');
+                    chip.className = 'category-chip';
+                    chip.textContent = `${labelMap[section] || section}: 0.0%`;
+                    categorySummaryBar.appendChild(chip);
                 });
+                gsap.fromTo('.category-chip',
+                    { opacity: 0, y: 15, scale: 0.9 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.08, ease: 'back.out(1.3)' }
+                );
+                return;
             }
+            
+            // Filtrer par date
+            let filteredData = allData.filter(audit => {
+                const auditDate = new Date(audit.timestamp).toLocaleDateString('fr-FR');
+                return auditDate === dateFilter;
+            });
             
             console.log('Chips - Données filtrées:', filteredData.length);
 
-            // Si pas de données, afficher 0% pour toutes les catégories
+            // Si pas de données pour cette date, afficher 0% pour toutes les catégories
             if (filteredData.length === 0) {
                 sectionOrder.forEach(section => {
                     const chip = document.createElement('div');
