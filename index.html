@@ -2742,8 +2742,11 @@
         }
 
         function exportPDCAByDate() {
+            console.log('[EXPORT] Début export PDCA');
             const exportDateSelect = document.getElementById('pdcaExportDate');
             const selectedDate = exportDateSelect.value || '';
+            console.log('[EXPORT] Date sélectionnée:', selectedDate);
+            console.log('[EXPORT] pdcaRows:', pdcaRows.length, 'lignes');
 
             if (!selectedDate) {
                 alert('Veuillez sélectionner une date à exporter.');
@@ -2751,15 +2754,19 @@
             }
 
             const rowsToExport = pdcaRows.filter(row => row.dateOnly === selectedDate);
+            console.log('[EXPORT] Lignes à exporter:', rowsToExport.length);
+            
             if (rowsToExport.length === 0) {
                 alert('Aucune donnée PDCA disponible pour la date sélectionnée.');
                 return;
             }
 
             if (typeof XLSX === 'undefined') {
+                console.error('[EXPORT] XLSX non disponible');
                 alert('Librairie Excel non disponible.');
                 return;
             }
+            console.log('[EXPORT] XLSX disponible, création du fichier...');
 
             const headers = [
                 'Date',
@@ -2802,6 +2809,7 @@
             const worksheet = XLSX.utils.aoa_to_sheet(excelRows);
             XLSX.utils.book_append_sheet(workbook, worksheet, 'PDCA');
             XLSX.writeFile(workbook, `PDCA_${safeDate}.xlsx`);
+            console.log('[EXPORT] Fichier Excel créé:', `PDCA_${safeDate}.xlsx`);
         }
 
         function renderPDCAFilteredRows() {
@@ -2892,7 +2900,12 @@
         }
 
         setupPDCAFilters();
-        document.getElementById('pdcaExportButton').addEventListener('click', exportPDCAByDate);
+        const exportBtn = document.getElementById('pdcaExportButton');
+        console.log('[INIT] Export button found:', !!exportBtn);
+        if (exportBtn) {
+            exportBtn.addEventListener('click', exportPDCAByDate);
+            console.log('[INIT] Export button listener attached');
+        }
         window.updatePDCACompletion = updatePDCACompletion;
 
         function loadDateHistory() {
