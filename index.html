@@ -2767,6 +2767,7 @@
                 'Ligne',
                 'Catégorie',
                 'Écart',
+                'Photo (Base64)',
                 'Cause',
                 'Action',
                 'Pilote',
@@ -2778,12 +2779,15 @@
 
             rowsToExport.forEach(row => {
                 const completionStatus = getPDCACompletionValue(row.completionKey);
+                // Pour la photo, on indique si elle existe et on peut copier le lien base64
+                const photoValue = row.photoData ? row.photoData : 'Pas de photo';
                 const values = [
                     row.date,
                     row.section,
                     row.line,
                     row.category,
                     row.description,
+                    photoValue,
                     row.cause,
                     row.action,
                     row.pilote,
