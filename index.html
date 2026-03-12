@@ -2119,19 +2119,28 @@
                 }
 
                 descriptionInput.addEventListener('input', function() {
-                    ensureDiscrepancy(sectionName, i).description = this.value;
-                });
+                    const entry = ensureDiscrepancy(sectionName, i);
+                    entry.description = this.value;
+                    console.log(`[ECART] ${sectionName}[${i}] description = "${this.value}"`);                });
                 causeInput.addEventListener('input', function() {
-                    ensureDiscrepancy(sectionName, i).cause = this.value;
+                    const entry = ensureDiscrepancy(sectionName, i);
+                    entry.cause = this.value;
+                    console.log(`[ECART] ${sectionName}[${i}] cause = "${this.value}"`);
                 });
                 actionInput.addEventListener('input', function() {
-                    ensureDiscrepancy(sectionName, i).action = this.value;
+                    const entry = ensureDiscrepancy(sectionName, i);
+                    entry.action = this.value;
+                    console.log(`[ECART] ${sectionName}[${i}] action = "${this.value}"`);
                 });
                 piloteInput.addEventListener('input', function() {
-                    ensureDiscrepancy(sectionName, i).pilote = this.value;
+                    const entry = ensureDiscrepancy(sectionName, i);
+                    entry.pilote = this.value;
+                    console.log(`[ECART] ${sectionName}[${i}] pilote = "${this.value}"`);
                 });
                 deadlineInput.addEventListener('change', function() {
-                    ensureDiscrepancy(sectionName, i).deadline = this.value;
+                    const entry = ensureDiscrepancy(sectionName, i);
+                    entry.deadline = this.value;
+                    console.log(`[ECART] ${sectionName}[${i}] deadline = "${this.value}"`);
                 });
 
                 photoInput.addEventListener('change', function(event) {
@@ -2258,29 +2267,52 @@
             // Stocker les réponses par section comme JSON string (Firebase n'accepte pas les tableaux imbriqués)
             const responsesNested = sectionOrder.map(section => {
                 const sectionResponses = responses[section] || [];
-                // Remplacer undefined par chaîne vide
-                return sectionResponses.map(r => r || '');
+                const questions = questionsData[section] || [];
+                // Utiliser une boucle for pour s'assurer que tous les indices sont traités
+                const result = [];
+                for (let i = 0; i < questions.length; i++) {
+                    result.push(sectionResponses[i] || '');
+                }
+                return result;
             });
             
             // Stocker les discrepancies par section comme JSON string
             // Les champs sont: photoName, photoData, description, cause, action, pilote, deadline
+            // IMPORTANT: Utiliser une boucle for pour garantir que tous les indices correspondent aux questions
             const discrepanciesNested = sectionOrder.map(section => {
                 const sectionDiscrepancies = discrepancies[section] || [];
-                return sectionDiscrepancies
-                    .filter(d => d !== undefined && d !== null)
-                    .map(d => ({
-                        photoName: String(d.photoName || ''),
-                        photoData: String(d.photoData || ''),
-                        description: String(d.description || ''),
-                        cause: String(d.cause || ''),
-                        action: String(d.action || ''),
-                        pilote: String(d.pilote || ''),
-                        deadline: String(d.deadline || '')
-                    }));
+                const questions = questionsData[section] || [];
+                const result = [];
+                for (let i = 0; i < questions.length; i++) {
+                    const d = sectionDiscrepancies[i];
+                    if (!d || d === undefined || d === null) {
+                        result.push(null);
+                    } else {
+                        result.push({
+                            photoName: String(d.photoName || ''),
+                            photoData: String(d.photoData || ''),
+                            description: String(d.description || ''),
+                            cause: String(d.cause || ''),
+                            action: String(d.action || ''),
+                            pilote: String(d.pilote || ''),
+                            deadline: String(d.deadline || '')
+                        });
+                    }
+                }
+                return result;
             });
             
             console.log('Payload responses (nested):', responsesNested);
-            console.log('Payload discrepancies (nested):', discrepanciesNested);
+            console.log('Payload discrepancies (nested):', JSON.stringify(discrepanciesNested, null, 2));
+            
+            // Log detaillé des discrepancies non vides
+            discrepanciesNested.forEach((sectionDisc, sIdx) => {
+                sectionDisc.forEach((d, qIdx) => {
+                    if (d && (d.description || d.cause || d.pilote)) {
+                        console.log(`[SAVE] Section ${sectionOrder[sIdx]}[${qIdx}]:`, d);
+                    }
+                });
+            });
             
             const payload = {
                 timestamp: new Date().toISOString(),
@@ -2606,6 +2638,8 @@
                 const dateOnlyValue = new Date(audit.timestamp).toLocaleDateString('fr-FR');
                 const responsesBySection = Array.isArray(audit.responses) ? audit.responses : [];
                 const discrepancyBySection = Array.isArray(audit.discrepancies) ? audit.discrepancies : [];
+                
+                console.log('[PDCA] Audit:', audit.timestamp, 'discrepancies raw:', audit.discrepancies);
 
                 sectionOrder.forEach((category, sectionIndex) => {
                     const responsesList = Array.isArray(responsesBySection[sectionIndex]) ? responsesBySection[sectionIndex] : [];
@@ -2615,6 +2649,7 @@
                         if (answer !== 'NOK') return;
 
                         const details = discrepancyList[questionIndex] || {};
+                        console.log(`[PDCA] NOK found: ${category}[${questionIndex}] details:`, details);
                         const completionKey = getPDCACompletionKey(audit, sectionIndex, questionIndex);
                         pdcaRows.push({
                             timestamp: audit.timestamp || '',
