@@ -1266,7 +1266,7 @@
                             <option value="">-- Sélectionner une date --</option>
                         </select>
                     </div>
-                    <button id="pdcaExportButton" class="pdca-export-button"><i class="bi bi-file-earmark-excel"></i> Exporter PDCA</button>
+                    <button id="pdcaExportButton" class="pdca-export-button"><i class="bi bi-filetype-html"></i> Exporter PDCA (avec photos)</button>
                 </div>
                 <div id="pdcaDeadlineBanner" class="pdca-deadline-banner"></div>
                 <div class="pdca-table-wrapper">
@@ -2761,55 +2761,88 @@
                 return;
             }
 
-            if (typeof XLSX === 'undefined') {
-                console.error('[EXPORT] XLSX non disponible');
-                alert('Librairie Excel non disponible.');
-                return;
-            }
-            console.log('[EXPORT] XLSX disponible, création du fichier...');
+            console.log('[EXPORT] Création du fichier HTML avec photos...');
 
-            const headers = [
-                'Date',
-                'Section',
-                'Ligne',
-                'Catégorie',
-                'Écart',
-                'Photo',
-                'Cause',
-                'Action',
-                'Pilote',
-                'Deadline',
-                'Completion'
-            ];
-
-            const excelRows = [headers];
+            // Créer un tableau HTML avec les photos intégrées
+            let htmlContent = `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>PDCA Export - ${selectedDate}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #002857; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #d6d6d6; padding: 10px; text-align: left; vertical-align: top; font-size: 13px; }
+        th { background-color: #002857; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .photo-cell img { max-width: 150px; max-height: 100px; border-radius: 4px; border: 1px solid #ccc; }
+        .no-photo { color: #999; font-style: italic; }
+        @media print { body { margin: 0; } }
+    </style>
+</head>
+<body>
+    <h1>PDCA - Suivi des écarts</h1>
+    <p><strong>Date:</strong> ${selectedDate}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Section</th>
+                <th>Ligne</th>
+                <th>Catégorie</th>
+                <th>Écart</th>
+                <th>Photo</th>
+                <th>Cause</th>
+                <th>Action</th>
+                <th>Pilote</th>
+                <th>Deadline</th>
+                <th>Completion</th>
+            </tr>
+        </thead>
+        <tbody>`;
 
             rowsToExport.forEach(row => {
                 const completionStatus = getPDCACompletionValue(row.completionKey);
-                // Indiquer si une photo existe (Oui/Non) - base64 trop long pour Excel
-                const photoValue = row.photoData ? 'Oui' : 'Non';
-                const values = [
-                    row.date,
-                    row.section,
-                    row.line,
-                    row.category,
-                    row.description,
-                    photoValue,
-                    row.cause,
-                    row.action,
-                    row.pilote,
-                    row.deadline,
-                    completionStatus
-                ];
-                excelRows.push(values);
+                const photoCell = row.photoData 
+                    ? `<img src="${row.photoData}" alt="Photo écart">` 
+                    : '<span class="no-photo">Pas de photo</span>';
+                
+                htmlContent += `
+            <tr>
+                <td>${row.date || '-'}</td>
+                <td>${row.section || '-'}</td>
+                <td>${row.line || '-'}</td>
+                <td>${row.category || '-'}</td>
+                <td>${row.description || '-'}</td>
+                <td class="photo-cell">${photoCell}</td>
+                <td>${row.cause || '-'}</td>
+                <td>${row.action || '-'}</td>
+                <td>${row.pilote || '-'}</td>
+                <td>${row.deadline || '-'}</td>
+                <td>${completionStatus}</td>
+            </tr>`;
             });
 
+            htmlContent += `
+        </tbody>
+    </table>
+    <p style="margin-top: 20px; color: #666; font-size: 12px;">Exporté le ${new Date().toLocaleString('fr-FR')}</p>
+</body>
+</html>`;
+
             const safeDate = selectedDate.replace(/[\\/:*?"<>|]/g, '-');
-            const workbook = XLSX.utils.book_new();
-            const worksheet = XLSX.utils.aoa_to_sheet(excelRows);
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'PDCA');
-            XLSX.writeFile(workbook, `PDCA_${safeDate}.xlsx`);
-            console.log('[EXPORT] Fichier Excel créé:', `PDCA_${safeDate}.xlsx`);
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `PDCA_${safeDate}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            console.log('[EXPORT] Fichier HTML créé:', `PDCA_${safeDate}.html`);
         }
 
         function renderPDCAFilteredRows() {
