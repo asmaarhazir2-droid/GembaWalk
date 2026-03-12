@@ -1077,6 +1077,315 @@
             letter-spacing: 1px;
             opacity: 0.85;
         }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        
+        /* Tablet (max-width: 1024px) */
+        @media (max-width: 1024px) {
+            h1 {
+                font-size: 28px;
+                padding-top: 15px;
+            }
+            .button-container {
+                width: 160px;
+            }
+            .nav-button {
+                font-size: 13px;
+                padding: 10px 12px;
+            }
+            .main-content {
+                margin-left: 180px;
+                padding: 15px;
+            }
+            .pdca-filters {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .category-summary-bar {
+                grid-template-columns: repeat(2, minmax(120px, 1fr));
+            }
+            .pdca-table {
+                min-width: 900px;
+            }
+        }
+
+        /* Mobile (max-width: 768px) */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 22px;
+                padding-top: 10px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            .date {
+                position: relative;
+                top: auto;
+                right: auto;
+                display: block;
+                text-align: center;
+                margin: 10px auto;
+                padding: 8px 15px;
+                font-size: 14px;
+                width: fit-content;
+            }
+            .button-container {
+                position: relative;
+                left: auto;
+                top: auto;
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                padding: 10px;
+                background-color: rgba(0, 40, 87, 0.1);
+                border-radius: 8px;
+                margin-bottom: 15px;
+            }
+            .nav-button {
+                width: auto;
+                flex: 1 1 auto;
+                min-width: 100px;
+                max-width: 150px;
+                font-size: 12px;
+                padding: 8px 10px;
+                text-align: center;
+                white-space: normal;
+            }
+            .button-separator {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 10px;
+                min-height: auto;
+            }
+            .dropdowns-container {
+                gap: 8px;
+            }
+            select, input[type="text"] {
+                width: 100%;
+                max-width: 100%;
+                margin-right: 0;
+                font-size: 14px;
+                padding: 10px;
+            }
+            .questions-container {
+                padding: 12px;
+                margin-top: 20px;
+            }
+            .question-item {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            .question-text {
+                font-size: 14px;
+            }
+            .response-buttons {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .response-btn {
+                flex: 1 1 auto;
+                min-width: 60px;
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+            .ecart-box {
+                padding: 10px;
+            }
+            .ecart-grid {
+                gap: 8px;
+            }
+            .prev-button, .next-button {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+            .dashboard-container {
+                padding: 10px;
+                gap: 20px;
+            }
+            .date-filter-wrapper {
+                padding: 12px;
+            }
+            .date-filter-layout {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .date-filter-picker {
+                max-width: 100%;
+            }
+            #dateHistorySelect {
+                max-width: 100%;
+            }
+            .category-summary-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .category-chip {
+                font-size: 11px;
+                padding: 6px 8px 6px 16px;
+            }
+            .category-chip::before {
+                width: 4px;
+                height: 14px;
+            }
+            .chart-wrapper {
+                padding: 12px;
+            }
+            .chart-wrapper h2 {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            #chartMoyenne, #chartByLine {
+                max-height: 300px;
+            }
+            #auditCategorySelect {
+                max-width: 100%;
+            }
+            .pdca-container {
+                padding: 12px;
+            }
+            .pdca-title {
+                font-size: 18px;
+            }
+            .pdca-filters {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .pdca-export {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .pdca-export-item {
+                min-width: 100%;
+            }
+            .pdca-export-button {
+                width: 100%;
+                padding: 12px;
+            }
+            .pdca-table-wrapper {
+                margin: 0 -12px;
+            }
+            .pdca-table {
+                min-width: 800px;
+                font-size: 12px;
+            }
+            .pdca-table th, .pdca-table td {
+                padding: 8px 6px;
+                font-size: 11px;
+            }
+            .focus-alert {
+                top: auto;
+                bottom: 60px;
+                font-size: 12px;
+            }
+            .focus-icon, .focus-text {
+                padding: 8px 10px;
+            }
+            .app-credit {
+                font-size: 10px;
+            }
+        }
+
+        /* Small Mobile (max-width: 480px) */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 18px;
+            }
+            .nav-button {
+                min-width: 80px;
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+            .nav-button i {
+                display: none;
+            }
+            .category-summary-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+            .category-chip {
+                font-size: 10px;
+                padding: 5px 6px 5px 14px;
+            }
+            .response-buttons {
+                flex-direction: column;
+            }
+            .response-btn {
+                width: 100%;
+            }
+            .auth-card {
+                padding: 16px;
+                max-width: 100%;
+                margin: 0 10px;
+            }
+            .auth-title {
+                font-size: 18px;
+            }
+            .auth-tabs {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .auth-tab {
+                padding: 10px;
+                font-size: 13px;
+            }
+            .auth-form input {
+                padding: 10px;
+                font-size: 14px;
+            }
+            .auth-submit {
+                padding: 12px;
+            }
+            .auth-login-logo, .auth-login-logo-left {
+                width: min(20vw, 100px);
+            }
+            .robot-container {
+                transform: scale(0.8);
+                margin-bottom: -20px;
+            }
+            .pdca-table {
+                min-width: 700px;
+            }
+        }
+
+        /* Landscape Mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .auth-gate {
+                padding: 10px;
+                gap: 10px;
+                overflow-y: auto;
+            }
+            .robot-container {
+                transform: scale(0.6);
+                margin-bottom: -30px;
+            }
+            .auth-card {
+                padding: 15px;
+            }
+            .auth-title {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+            .auth-form {
+                gap: 8px;
+            }
+            .auth-form input {
+                padding: 8px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .button-container, .nav-button, .focus-alert, .app-credit {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .pdca-table {
+                min-width: auto;
+            }
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
