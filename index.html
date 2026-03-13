@@ -123,17 +123,22 @@
         select {
             background-color: #ffffff;
             color: #002857;
-            border: 2px solid #FF7514;
-            padding: 10px 15px;
-            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            font-size: 15px;
             font-family: Arial, sans-serif;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-top: 15px;
-            margin-bottom: 15px;
-            margin-left: 0;
-            margin-right: 20px;
+            margin: 0;
             display: block;
+            width: 100%;
+            max-width: 400px;
+            transition: border-color 0.2s ease;
+        }
+        select:focus {
+            outline: none;
+            border-color: #FF7514;
+            box-shadow: 0 0 0 3px rgba(255, 117, 20, 0.15);
         }
         select:hover {
             background-color: #f5f5f5;
@@ -146,14 +151,22 @@
         input[type="text"] {
             background-color: #ffffff;
             color: #002857;
-            border: 2px solid #FF7514;
-            padding: 10px 15px;
-            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            font-size: 15px;
             font-family: Arial, sans-serif;
-            border-radius: 5px;
-            margin-top: 15px;
-            margin-bottom: 15px;
+            border-radius: 8px;
+            margin: 0;
             display: none;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #FF7514;
+            box-shadow: 0 0 0 3px rgba(255, 117, 20, 0.15);
         }
         input[type="text"].active {
             display: block;
@@ -239,7 +252,17 @@
         .dropdowns-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #002857;
         }
         .questions-container {
             margin-top: 30px;
@@ -364,11 +387,13 @@
             box-shadow: 0 2px 12px rgba(0, 40, 87, 0.08);
         }
         .section-title {
-            font-size: 20px;
+            font-size: 22px;
             color: #002857;
             font-weight: 700;
-            margin-top: 20px;
-            margin-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
         }
         .next-button {
             float: right;
@@ -838,14 +863,18 @@
             left: 50%;
             bottom: 10px;
             transform: translateX(-50%);
-            color: #ffffff;
+            color: #002857;
             font-family: Arial, sans-serif;
             font-size: 12px;
             font-weight: 600;
-            opacity: 0.85;
+            opacity: 0.6;
             z-index: 10001;
             pointer-events: none;
             text-align: center;
+        }
+        .auth-gate ~ .app-credit {
+            color: #ffffff;
+            opacity: 0.85;
         }
 
         /* ===== ROBOT ===== */
@@ -1154,37 +1183,55 @@
             }
             .app-body {
                 flex-direction: column;
+                padding: 10px;
+                gap: 10px;
             }
             .button-container {
                 position: relative;
                 top: auto;
-                width: 100%;
-                min-width: 100%;
+                width: auto;
+                min-width: auto;
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 8px;
                 padding: 12px;
-                margin: 10px;
-                border-radius: 8px;
+                margin: 0;
+                border-radius: 12px;
+                background-color: #ffffff;
+                box-shadow: 0 2px 12px rgba(0, 40, 87, 0.08);
             }
             .nav-button {
                 width: auto;
-                flex: 1 1 auto;
-                min-width: 90px;
-                max-width: 140px;
+                flex: 0 1 auto;
+                min-width: auto;
+                max-width: none;
                 font-size: 12px;
-                padding: 8px 10px;
+                padding: 10px 14px;
                 text-align: center;
-                white-space: normal;
+                white-space: nowrap;
+                border-radius: 6px;
+            }
+            .nav-button.active {
+                background-color: #002857;
+                color: white;
+            }
+            .logout-button {
+                background-color: #ffebee;
+                color: #c62828;
+            }
+            .delete-data-button {
+                background-color: #fff3e0;
+                color: #e65100;
             }
             .button-separator {
                 display: none;
             }
             .main-content {
-                margin: 0 10px 10px 10px;
+                margin: 0;
                 padding: 15px;
                 min-height: auto;
+                border-radius: 12px;
             }
             .dropdowns-container {
                 gap: 8px;
@@ -1517,26 +1564,38 @@
                 <div id="data-section" class="content-section active">
                     <h2 class="section-title"><i class="bi bi-pencil-square"></i> Saisie des données d'audit</h2>
                     <div class="dropdowns-container">
-                        <select id="workstation">
-                            <option value="">&#xF3E0; -- Sélectionner la section --</option>
-                            <option value="CRA">CRA</option>
-                            <option value="WPA">WPA</option>
-                            <option value="X1310_PDB">X1310 PDB</option>
-                            <option value="X1310_BODY">X1310 BODY</option>
-                            <option value="X1310_EGR">X1310 EGR</option>
-                            <option value="ENGINE">ENGINE</option>
-                            <option value="Smalls_NISSAN">Smalls/NISSAN</option>
-                        </select>
+                        <div class="form-group">
+                            <label class="form-label"><i class="bi bi-building"></i> Section</label>
+                            <select id="workstation">
+                                <option value="">-- Sélectionner la section --</option>
+                                <option value="CRA">CRA</option>
+                                <option value="WPA">WPA</option>
+                                <option value="X1310_PDB">X1310 PDB</option>
+                                <option value="X1310_BODY">X1310 BODY</option>
+                                <option value="X1310_EGR">X1310 EGR</option>
+                                <option value="ENGINE">ENGINE</option>
+                                <option value="Smalls_NISSAN">Smalls/NISSAN</option>
+                            </select>
+                        </div>
 
-                        <select id="zone">
-                            <option value="">&#xF3AB; -- Sélectionner la zone --</option>
-                        </select>
+                        <div class="form-group">
+                            <label class="form-label"><i class="bi bi-geo-alt"></i> Zone</label>
+                            <select id="zone">
+                                <option value="">-- Sélectionner la zone --</option>
+                            </select>
+                        </div>
 
-                        <input type="text" id="machineNumber" placeholder="&#xF3E0; Numéro de la machine">
+                        <div class="form-group">
+                            <label class="form-label"><i class="bi bi-hash"></i> Numéro de machine</label>
+                            <input type="text" id="machineNumber" placeholder="Entrer le numéro de la machine">
+                        </div>
 
-                        <select id="category">
-                            <option value="">&#xF5A0; -- Sélectionner Ligne ou machine --</option>
-                        </select>
+                        <div class="form-group">
+                            <label class="form-label"><i class="bi bi-diagram-3"></i> Ligne / Machine</label>
+                            <select id="category">
+                                <option value="">-- Sélectionner Ligne ou machine --</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="questions-container" id="questionsContainer"></div>
                 </div>
