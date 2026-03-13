@@ -72,17 +72,15 @@
             font-size: 18px;
         }
         .focus-alert {
-            position: fixed;
-            top: 75px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
+            position: relative;
+            margin: 0 0 15px 0;
             font-family: Arial, sans-serif;
             font-size: 14px;
             font-weight: 700;
             display: none;
             animation: focusBlink 1s infinite;
             align-items: center;
+            justify-content: center;
             gap: 0;
         }
         .focus-icon {
@@ -1343,9 +1341,8 @@
                 font-size: 11px;
             }
             .focus-alert {
-                top: auto;
-                bottom: 60px;
                 font-size: 12px;
+                margin: 0 0 10px 0;
             }
             .focus-icon, .focus-text {
                 padding: 8px 10px;
@@ -1542,7 +1539,6 @@
             <h1><i class="bi bi-clipboard-data"></i> GEMBA WALK AUDIT</h1>
             <div class="date" id="dateDisplay"></div>
         </header>
-        <div id="focusAlert" class="focus-alert"></div>
 
         <div class="app-body">
             <nav class="button-container">
@@ -1595,6 +1591,7 @@
                 </div>
 
                 <div id="dashboard-section" class="content-section">
+                    <div id="focusAlert" class="focus-alert"></div>
                     <div class="dashboard-container">
                         <div class="date-filter-wrapper">
                             <div class="date-filter-layout">
