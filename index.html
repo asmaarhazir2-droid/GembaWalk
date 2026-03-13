@@ -157,7 +157,7 @@
             font-family: Arial, sans-serif;
             border-radius: 8px;
             margin: 0;
-            display: none;
+            display: block;
             width: 100%;
             max-width: 400px;
             box-sizing: border-box;
@@ -168,13 +168,7 @@
             border-color: #FF7514;
             box-shadow: 0 0 0 3px rgba(255, 117, 20, 0.15);
         }
-        input[type="text"].active {
-            display: block;
-        }
         #category {
-            display: none;
-        }
-        #category.active {
             display: block;
         }
         .button-container {
@@ -1585,12 +1579,12 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="machineNumberGroup" style="display: none;">
                             <label class="form-label"><i class="bi bi-hash"></i> Numéro de machine</label>
-                            <input type="text" id="machineNumber" placeholder="Entrer le numéro de la machine">
+                            <input type="text" id="machineNumber" placeholder="Entrer le numéro de la machine" style="display: block;">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="categoryGroup" style="display: none;">
                             <label class="form-label"><i class="bi bi-diagram-3"></i> Ligne / Machine</label>
                             <select id="category">
                                 <option value="">-- Sélectionner Ligne ou machine --</option>
@@ -2203,6 +2197,8 @@
 
         workstationSelect.addEventListener('change', function() {
             const selectedWorkstation = this.value;
+            const machineNumberGroup = document.getElementById('machineNumberGroup');
+            const categoryGroup = document.getElementById('categoryGroup');
             
             // Réinitialiser la liste des zones
             zoneSelect.innerHTML = '<option value="">-- Sélectionner la zone --</option>';
@@ -2210,18 +2206,20 @@
             machineNumberInput.value = '';
             document.getElementById('questionsContainer').classList.remove('active');
             
+            // Cacher les deux groupes par défaut
+            machineNumberGroup.style.display = 'none';
+            categoryGroup.style.display = 'none';
+            
             // Déterminer si c'est Machine ou Ligne
             const isMachine = selectedWorkstation === 'CRA' || selectedWorkstation === 'WPA';
             
             if (isMachine) {
-                // Afficher la zone de texte pour le numéro de machine
-                machineNumberInput.classList.add('active');
-                categorySelect.classList.remove('active');
+                // Afficher la zone de texte pour le numéro de machine (CRA ou WPA)
+                machineNumberGroup.style.display = 'flex';
                 categorySelect.disabled = true;
             } else if (selectedWorkstation !== '') {
-                // Afficher la liste déroulante pour la ligne
-                categorySelect.classList.add('active');
-                machineNumberInput.classList.remove('active');
+                // Afficher la liste déroulante pour la ligne (autres sections)
+                categoryGroup.style.display = 'flex';
                 categorySelect.disabled = false;
                 
                 // Remplir la liste des lignes
@@ -2236,8 +2234,6 @@
                 }
             } else {
                 // Aucune sélection
-                machineNumberInput.classList.remove('active');
-                categorySelect.classList.remove('active');
                 categorySelect.disabled = true;
             }
             
@@ -2254,32 +2250,34 @@
         zoneSelect.addEventListener('change', function() {
             const selectedZone = this.value;
             const selectedWorkstation = workstationSelect.value;
+            const machineNumberGroup = document.getElementById('machineNumberGroup');
+            const categoryGroup = document.getElementById('categoryGroup');
 
-            // Reset questions and category input
+            // Reset questions
             document.getElementById('questionsContainer').classList.remove('active');
 
             if (selectedZone === '') {
-                // nothing selected
+                // Aucune zone sélectionnée - cacher les deux groupes
                 categorySelect.disabled = true;
-                machineNumberInput.classList.remove('active');
-                categorySelect.classList.remove('active');
+                machineNumberGroup.style.display = 'none';
+                categoryGroup.style.display = 'none';
                 return;
             }
 
-            // If workstation is CRA or WPA -> show machine number input
+            // Si CRA ou WPA -> afficher le champ numéro de machine
             if (selectedWorkstation === 'CRA' || selectedWorkstation === 'WPA') {
-                machineNumberInput.classList.add('active');
+                machineNumberGroup.style.display = 'flex';
                 machineNumberInput.disabled = false;
-                categorySelect.classList.remove('active');
+                categoryGroup.style.display = 'none';
                 categorySelect.disabled = true;
             } else {
-                // For other sections show the category select (Ligne)
-                machineNumberInput.classList.remove('active');
+                // Pour les autres sections -> afficher la liste Ligne
+                machineNumberGroup.style.display = 'none';
                 machineNumberInput.disabled = true;
-                categorySelect.classList.add('active');
+                categoryGroup.style.display = 'flex';
                 categorySelect.disabled = false;
 
-                // If there are zone-specific options use them (eg. X1310 PDB 2.1)
+                // Si options spécifiques à la zone (ex: X1310 PDB 2.1)
                 if (zoneSpecificOptions[selectedZone]) {
                     categorySelect.innerHTML = '<option value="">-- Sélectionner Ligne --</option>';
                     zoneSpecificOptions[selectedZone].forEach(item => {
@@ -2289,7 +2287,7 @@
                         categorySelect.appendChild(opt);
                     });
                 } else {
-                    // Fallback to generic lineData for the workstation
+                    // Fallback aux lignes génériques
                     categorySelect.innerHTML = '<option value="">-- Sélectionner Ligne --</option>';
                     if (lineData[selectedWorkstation]) {
                         lineData[selectedWorkstation].forEach(line => {
@@ -2748,9 +2746,9 @@
             workstationSelect.value = '';
             zoneSelect.innerHTML = '<option value="">-- Sélectionner la zone --</option>';
             machineNumberInput.value = '';
-            machineNumberInput.classList.remove('active');
+            document.getElementById('machineNumberGroup').style.display = 'none';
             categorySelect.value = '';
-            categorySelect.classList.remove('active');
+            document.getElementById('categoryGroup').style.display = 'none';
             categorySelect.disabled = true;
             document.getElementById('questionsContainer').innerHTML = '';
             
