@@ -589,6 +589,12 @@
         .pdca-export-button:hover {
             background-color: #009adf;
         }
+        .pdca-export-button.excel {
+            background-color: #2e7d32;
+        }
+        .pdca-export-button.excel:hover {
+            background-color: #256628;
+        }
         .pdca-table-wrapper {
             overflow-x: auto;
         }
@@ -662,6 +668,88 @@
             background-color: #2e7d32;
             color: #ffffff;
             border-color: #2e7d32;
+        }
+        .pdca-actions {
+            min-width: 145px;
+            white-space: nowrap;
+        }
+        .pdca-action-btn {
+            border: none;
+            border-radius: 5px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-right: 6px;
+        }
+        .pdca-action-btn.edit {
+            background-color: #e8f0fe;
+            color: #002857;
+        }
+        .pdca-action-btn.delete {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .pdca-action-btn:hover {
+            filter: brightness(0.95);
+        }
+        .pdca-action-btn.save {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .pdca-action-btn.cancel {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        .pdca-edit-cell {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            width: 100%;
+        }
+        .pdca-edit-icon {
+            color: #FF7514;
+            font-size: 14px;
+            flex: 0 0 auto;
+            margin-top: 8px;
+        }
+        .pdca-inline-input,
+        .pdca-inline-textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #FF7514;
+            border-radius: 4px;
+            padding: 8px 10px;
+            font-size: 14px;
+            color: #002857;
+            font-family: Arial, sans-serif;
+            background-color: #fffef9;
+            line-height: 1.35;
+        }
+        .pdca-inline-input {
+            min-height: 38px;
+        }
+        .pdca-inline-textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+        .pdca-table td:nth-child(5),
+        .pdca-table th:nth-child(5) {
+            min-width: 280px;
+        }
+        .pdca-table td:nth-child(6),
+        .pdca-table th:nth-child(6),
+        .pdca-table td:nth-child(7),
+        .pdca-table th:nth-child(7) {
+            min-width: 230px;
+        }
+        .pdca-table td:nth-child(8),
+        .pdca-table th:nth-child(8) {
+            min-width: 180px;
+        }
+        .pdca-table td:nth-child(9),
+        .pdca-table th:nth-child(9) {
+            min-width: 170px;
         }
         .app-shell {
             display: none;
@@ -1454,6 +1542,7 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -1648,6 +1737,7 @@
                         </select>
                     </div>
                     <button id="pdcaExportButton" class="pdca-export-button"><i class="bi bi-filetype-html"></i> Exporter PDCA (avec photos)</button>
+                    <button id="pdcaExportExcelButton" class="pdca-export-button excel"><i class="bi bi-file-earmark-excel"></i> Exporter PDCA (Excel)</button>
                 </div>
                 <div id="pdcaDeadlineBanner" class="pdca-deadline-banner"></div>
                 <div class="pdca-table-wrapper">
@@ -1664,6 +1754,7 @@
                                 <th><i class="bi bi-person"></i> Pilote</th>
                                 <th><i class="bi bi-clock"></i> Deadline</th>
                                 <th><i class="bi bi-check2-circle"></i> Completion</th>
+                                <th><i class="bi bi-gear"></i> Gestion</th>
                             </tr>
                         </thead>
                         <tbody id="pdcaTableBody"></tbody>
@@ -2831,6 +2922,31 @@
             return parsed;
         }
 
+        function toDateKey(value) {
+            if (!value) return '';
+
+            if (value instanceof Date) {
+                if (isNaN(value.getTime())) return '';
+                const y = value.getFullYear();
+                const m = String(value.getMonth() + 1).padStart(2, '0');
+                const d = String(value.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+
+            const text = String(value).trim();
+            const frMatch = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (frMatch) {
+                const d = frMatch[1].padStart(2, '0');
+                const m = frMatch[2].padStart(2, '0');
+                const y = frMatch[3];
+                return `${y}-${m}-${d}`;
+            }
+
+            const parsed = new Date(text);
+            if (isNaN(parsed.getTime())) return '';
+            return toDateKey(parsed);
+        }
+
         function updateDate(dateFilter = null) {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const selected = parseDateFilter(dateFilter);
@@ -2844,6 +2960,8 @@
         let selectedDate = null;  // Store the selected date filter
         let pdcaRows = [];
         let pdcaCompletionStatus = {};
+        let pdcaRowLookup = {};
+        let pdcaEditingRowId = null;
 
         function getPDCACompletionKey(audit, sectionIndex, questionIndex) {
             const lineValue = audit.line || audit.machineNumber || '';
@@ -3081,12 +3199,15 @@
             };
 
             pdcaRows = [];
+            pdcaRowLookup = {};
 
             allData.forEach(audit => {
                 const sectionValue = audit.workstation || '';
                 const lineValue = audit.line || audit.machineNumber || '';
-                const dateValue = new Date(audit.timestamp).toLocaleString('fr-FR');
-                const dateOnlyValue = new Date(audit.timestamp).toLocaleDateString('fr-FR');
+                const auditDate = new Date(audit.timestamp);
+                const dateValue = auditDate.toLocaleString('fr-FR');
+                const dateOnlyValue = auditDate.toLocaleDateString('fr-FR');
+                const dateKeyValue = toDateKey(auditDate);
                 const responsesBySection = Array.isArray(audit.responses) ? audit.responses : [];
                 const discrepancyBySection = Array.isArray(audit.discrepancies) ? audit.discrepancies : [];
                 
@@ -3102,10 +3223,16 @@
                         const details = discrepancyList[questionIndex] || {};
                         console.log(`[PDCA] NOK found: ${category}[${questionIndex}] details:`, details);
                         const completionKey = getPDCACompletionKey(audit, sectionIndex, questionIndex);
-                        pdcaRows.push({
+                        const rowId = `row-${pdcaRows.length}`;
+                        const pdcaRow = {
+                            id: rowId,
+                            auditId: audit._id || '',
+                            sectionIndex: sectionIndex,
+                            questionIndex: questionIndex,
                             timestamp: audit.timestamp || '',
                             date: dateValue,
                             dateOnly: dateOnlyValue,
+                            dateKey: dateKeyValue,
                             section: sectionValue,
                             line: lineValue,
                             category: labelMap[category] || category,
@@ -3116,7 +3243,9 @@
                             deadline: details.deadline || '',
                             photoData: details.photoData || '',
                             completionKey: completionKey
-                        });
+                        };
+                        pdcaRows.push(pdcaRow);
+                        pdcaRowLookup[rowId] = pdcaRow;
                     });
                 });
             });
@@ -3196,6 +3325,13 @@
             console.log('[EXPORT] Début export PDCA');
             const exportDateSelect = document.getElementById('pdcaExportDate');
             const selectedDate = exportDateSelect.value || '';
+            const selectedDateKey = toDateKey(selectedDate);
+
+            // Reconstruit la source si la section PDCA n'a pas encore été initialisée
+            if (pdcaRows.length === 0) {
+                initPDCA();
+            }
+
             console.log('[EXPORT] Date sélectionnée:', selectedDate);
             console.log('[EXPORT] pdcaRows:', pdcaRows.length, 'lignes');
 
@@ -3204,7 +3340,7 @@
                 return;
             }
 
-            const rowsToExport = pdcaRows.filter(row => row.dateOnly === selectedDate);
+            const rowsToExport = pdcaRows.filter(row => row.dateKey === selectedDateKey);
             console.log('[EXPORT] Lignes à exporter:', rowsToExport.length);
             
             if (rowsToExport.length === 0) {
@@ -3296,6 +3432,128 @@
             console.log('[EXPORT] Fichier HTML créé:', `PDCA_${safeDate}.html`);
         }
 
+        function getImageExtensionFromDataUrl(dataUrl) {
+            const match = String(dataUrl || '').match(/^data:image\/(png|jpe?g|gif);base64,/i);
+            if (!match) return null;
+            const ext = match[1].toLowerCase();
+            if (ext === 'jpg') return 'jpeg';
+            return ext;
+        }
+
+        async function exportPDCAByDateExcel() {
+            console.log('[EXPORT EXCEL] Début export PDCA Excel');
+            const exportDateSelect = document.getElementById('pdcaExportDate');
+            const selectedDate = exportDateSelect.value || '';
+            const selectedDateKey = toDateKey(selectedDate);
+
+            if (pdcaRows.length === 0) {
+                initPDCA();
+            }
+
+            if (!selectedDate) {
+                alert('Veuillez sélectionner une date à exporter.');
+                return;
+            }
+
+            const rowsToExport = pdcaRows.filter(row => row.dateKey === selectedDateKey);
+
+            if (rowsToExport.length === 0) {
+                alert('Aucune donnée PDCA disponible pour la date sélectionnée.');
+                return;
+            }
+
+            if (typeof ExcelJS === 'undefined') {
+                alert('Le module Excel (ExcelJS) est indisponible. Rechargez la page puis réessayez.');
+                return;
+            }
+
+            try {
+                const workbook = new ExcelJS.Workbook();
+                const worksheet = workbook.addWorksheet('PDCA');
+
+                worksheet.columns = [
+                    { header: 'Date', key: 'date', width: 22 },
+                    { header: 'Section', key: 'section', width: 18 },
+                    { header: 'Ligne', key: 'line', width: 30 },
+                    { header: 'Categorie', key: 'category', width: 26 },
+                    { header: 'Ecart', key: 'description', width: 36 },
+                    { header: 'Photo', key: 'photo', width: 20 },
+                    { header: 'Cause', key: 'cause', width: 30 },
+                    { header: 'Action', key: 'action', width: 30 },
+                    { header: 'Pilote', key: 'pilote', width: 24 },
+                    { header: 'Deadline', key: 'deadline', width: 14 },
+                    { header: 'Completion', key: 'completion', width: 14 }
+                ];
+
+                const headerRow = worksheet.getRow(1);
+                headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                headerRow.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FF002857' }
+                };
+                headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+
+                let excelRowNumber = 2;
+                rowsToExport.forEach(row => {
+                    worksheet.addRow({
+                        date: row.date || '-',
+                        section: row.section || '-',
+                        line: row.line || '-',
+                        category: row.category || '-',
+                        description: row.description || '-',
+                        photo: '',
+                        cause: row.cause || '-',
+                        action: row.action || '-',
+                        pilote: row.pilote || '-',
+                        deadline: row.deadline || '-',
+                        completion: getPDCACompletionValue(row.completionKey)
+                    });
+
+                    const currentRow = worksheet.getRow(excelRowNumber);
+                    currentRow.alignment = { vertical: 'middle', wrapText: true };
+
+                    if (row.photoData) {
+                        const ext = getImageExtensionFromDataUrl(row.photoData) || 'jpeg';
+                        const imageId = workbook.addImage({
+                            base64: row.photoData,
+                            extension: ext
+                        });
+
+                        currentRow.height = 70;
+                        worksheet.addImage(imageId, {
+                            tl: { col: 5.1, row: excelRowNumber - 1 + 0.1 },
+                            ext: { width: 96, height: 64 }
+                        });
+                    }
+
+                    excelRowNumber += 1;
+                });
+
+                worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+
+                const safeDate = selectedDate.replace(/[\\/:*?"<>|]/g, '-');
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob(
+                    [buffer],
+                    { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+                );
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `PDCA_${safeDate}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                console.log('[EXPORT EXCEL] Fichier Excel créé avec photos:', `PDCA_${safeDate}.xlsx`);
+            } catch (err) {
+                console.error('[EXPORT EXCEL] Erreur export:', err);
+                alert('Erreur lors de l\'export Excel avec photos.');
+            }
+        }
+
         function renderPDCAFilteredRows() {
             const table = document.getElementById('pdcaTable');
             const tableBody = document.getElementById('pdcaTableBody');
@@ -3320,7 +3578,7 @@
             const filteredRows = pdcaRows.filter(row => {
                 if (filters.section && row.section !== filters.section) return false;
                 if (filters.pilote && row.pilote !== filters.pilote) return false;
-                if (filters.date && row.dateOnly !== filters.date) return false;
+                if (filters.date && row.dateKey !== toDateKey(filters.date)) return false;
                 return true;
             });
 
@@ -3339,27 +3597,56 @@
             let overdueCount = 0;
             filteredRows.forEach(row => {
                 const tr = document.createElement('tr');
+                tr.setAttribute('data-row-id', row.id);
                 const completionStatus = getPDCACompletionValue(row.completionKey);
                 const isOverdue = completionStatus !== 'completed' && isDeadlineOverdue(row.deadline);
+                const isEditing = pdcaEditingRowId === row.id;
                 if (isOverdue) overdueCount++;
+
+                const descriptionCell = isEditing
+                    ? `<div class="pdca-edit-cell"><i class="bi bi-pencil-fill pdca-edit-icon"></i><textarea class="pdca-inline-textarea" data-field="description">${escapeHtml(row.description || '')}</textarea></div>${row.photoData ? '<img src="' + row.photoData + '" class="pdca-photo" alt="Photo écart">' : ''}`
+                    : `<div>${row.description || '-'}</div>${row.photoData ? '<img src="' + row.photoData + '" class="pdca-photo" alt="Photo écart">' : ''}`;
+
+                const causeCell = isEditing
+                    ? `<div class="pdca-edit-cell"><i class="bi bi-pencil-fill pdca-edit-icon"></i><textarea class="pdca-inline-textarea" data-field="cause">${escapeHtml(row.cause || '')}</textarea></div>`
+                    : `${row.cause || '-'}`;
+
+                const actionCell = isEditing
+                    ? `<div class="pdca-edit-cell"><i class="bi bi-pencil-fill pdca-edit-icon"></i><textarea class="pdca-inline-textarea" data-field="action">${escapeHtml(row.action || '')}</textarea></div>`
+                    : `${row.action || '-'}`;
+
+                const piloteCell = isEditing
+                    ? `<div class="pdca-edit-cell"><i class="bi bi-pencil-fill pdca-edit-icon"></i><input class="pdca-inline-input" data-field="pilote" type="text" value="${escapeHtml(row.pilote || '')}"></div>`
+                    : `${row.pilote || '-'}`;
+
+                const deadlineCell = isEditing
+                    ? `<div class="pdca-edit-cell"><i class="bi bi-pencil-fill pdca-edit-icon"></i><input class="pdca-inline-input" data-field="deadline" type="date" value="${escapeHtml(row.deadline || '')}"></div>`
+                    : `${row.deadline || '-'}`;
+
+                const managementCell = isEditing
+                    ? `<button class="pdca-action-btn save" onclick="savePDCAEntry('${row.id}')"><i class="bi bi-check2-circle"></i> Enregistrer</button><button class="pdca-action-btn cancel" onclick="cancelEditPDCAEntry()"><i class="bi bi-x-circle"></i> Annuler</button>`
+                    : `<button class="pdca-action-btn edit" onclick="startEditPDCAEntry('${row.id}')"><i class="bi bi-pencil-square"></i> Modifier</button><button class="pdca-action-btn delete" onclick="deletePDCAEntry('${row.id}')"><i class="bi bi-trash3"></i> Supprimer</button>`;
+
                 tr.innerHTML = `
                     <td>${row.date || '-'}</td>
                     <td>${row.section || '-'}</td>
                     <td>${row.line || '-'}</td>
                     <td>${row.category || '-'}</td>
                     <td>
-                        <div>${row.description || '-'}</div>
-                        ${row.photoData ? '<img src="' + row.photoData + '" class="pdca-photo" alt="Photo écart">' : ''}
+                        ${descriptionCell}
                     </td>
-                    <td>${row.cause || '-'}</td>
-                    <td>${row.action || '-'}</td>
-                    <td>${row.pilote || '-'}</td>
-                    <td class="${isOverdue ? 'pdca-deadline-alert' : ''}">${row.deadline || '-'}</td>
+                    <td>${causeCell}</td>
+                    <td>${actionCell}</td>
+                    <td>${piloteCell}</td>
+                    <td class="${isOverdue ? 'pdca-deadline-alert' : ''}">${deadlineCell}</td>
                     <td class="${getCompletionCellClass(completionStatus)}">
                         <select class="pdca-completion-select" onchange="updatePDCACompletion(this, '${row.completionKey}')">
                             <option value="on going" ${completionStatus === 'on going' ? 'selected' : ''}>on going</option>
                             <option value="completed" ${completionStatus === 'completed' ? 'selected' : ''}>completed</option>
                         </select>
+                    </td>
+                    <td class="pdca-actions">
+                        ${managementCell}
                     </td>
                 `;
                 tableBody.appendChild(tr);
@@ -3383,14 +3670,147 @@
             }
         }
 
+        function getAuditById(auditId) {
+            return cachedResults.find(audit => audit && audit._id === auditId) || null;
+        }
+
+        async function persistPDCAArrays(auditId, responsesNested, discrepanciesNested) {
+            await db.collection('results').doc(auditId).update({
+                responsesJson: JSON.stringify(responsesNested),
+                discrepanciesJson: JSON.stringify(discrepanciesNested)
+            });
+        }
+
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function startEditPDCAEntry(rowId) {
+            pdcaEditingRowId = rowId;
+            renderPDCAFilteredRows();
+        }
+
+        function cancelEditPDCAEntry() {
+            pdcaEditingRowId = null;
+            renderPDCAFilteredRows();
+        }
+
+        async function savePDCAEntry(rowId) {
+            const row = pdcaRowLookup[rowId];
+            if (!row) {
+                alert('Ligne PDCA introuvable.');
+                return;
+            }
+
+            const audit = getAuditById(row.auditId);
+            if (!audit) {
+                alert('Audit source introuvable.');
+                return;
+            }
+
+            const rowElement = document.querySelector(`tr[data-row-id="${rowId}"]`);
+            if (!rowElement) {
+                alert('Ligne en édition introuvable.');
+                return;
+            }
+
+            const newDescription = (rowElement.querySelector('[data-field="description"]') || {}).value || '';
+            const newCause = (rowElement.querySelector('[data-field="cause"]') || {}).value || '';
+            const newAction = (rowElement.querySelector('[data-field="action"]') || {}).value || '';
+            const newPilote = (rowElement.querySelector('[data-field="pilote"]') || {}).value || '';
+            const newDeadline = (rowElement.querySelector('[data-field="deadline"]') || {}).value || '';
+
+            const responsesNested = normalizeNestedArrayBySection(audit.responses || []);
+            const discrepanciesNested = normalizeNestedArrayBySection(audit.discrepancies || []);
+
+            discrepanciesNested[row.sectionIndex] = discrepanciesNested[row.sectionIndex] || [];
+            const existing = discrepanciesNested[row.sectionIndex][row.questionIndex] || {};
+            discrepanciesNested[row.sectionIndex][row.questionIndex] = {
+                ...existing,
+                description: String(newDescription || ''),
+                cause: String(newCause || ''),
+                action: String(newAction || ''),
+                pilote: String(newPilote || ''),
+                deadline: String(newDeadline || '')
+            };
+
+            try {
+                await persistPDCAArrays(row.auditId, responsesNested, discrepanciesNested);
+                pdcaEditingRowId = null;
+                alert('Ligne PDCA modifiée avec succès.');
+                initPDCA();
+            } catch (err) {
+                console.error('Erreur modification PDCA:', err);
+                alert('Erreur lors de la modification de la ligne PDCA.');
+            }
+        }
+
+        async function deletePDCAEntry(rowId) {
+            const row = pdcaRowLookup[rowId];
+            if (!row) {
+                alert('Ligne PDCA introuvable.');
+                return;
+            }
+
+            const shouldDelete = confirm('Supprimer cette ligne du tableau PDCA ?');
+            if (!shouldDelete) return;
+
+            const audit = getAuditById(row.auditId);
+            if (!audit) {
+                alert('Audit source introuvable.');
+                return;
+            }
+
+            const responsesNested = normalizeNestedArrayBySection(audit.responses || []);
+            const discrepanciesNested = normalizeNestedArrayBySection(audit.discrepancies || []);
+
+            responsesNested[row.sectionIndex] = responsesNested[row.sectionIndex] || [];
+            discrepanciesNested[row.sectionIndex] = discrepanciesNested[row.sectionIndex] || [];
+
+            // Retirer la ligne PDCA en supprimant le NOK de la question source
+            responsesNested[row.sectionIndex][row.questionIndex] = 'NA';
+            discrepanciesNested[row.sectionIndex][row.questionIndex] = null;
+
+            try {
+                await persistPDCAArrays(row.auditId, responsesNested, discrepanciesNested);
+                delete pdcaCompletionStatus[row.completionKey];
+                await savePDCACompletionStatus();
+                if (pdcaEditingRowId === rowId) {
+                    pdcaEditingRowId = null;
+                }
+                alert('Ligne PDCA supprimée avec succès.');
+                initPDCA();
+            } catch (err) {
+                console.error('Erreur suppression PDCA:', err);
+                alert('Erreur lors de la suppression de la ligne PDCA.');
+            }
+        }
+
         setupPDCAFilters();
         const exportBtn = document.getElementById('pdcaExportButton');
+        const exportExcelBtn = document.getElementById('pdcaExportExcelButton');
         console.log('[INIT] Export button found:', !!exportBtn);
         if (exportBtn) {
+            exportBtn.removeEventListener('click', exportPDCAByDate);
             exportBtn.addEventListener('click', exportPDCAByDate);
             console.log('[INIT] Export button listener attached');
         }
+        console.log('[INIT] Export Excel button found:', !!exportExcelBtn);
+        if (exportExcelBtn) {
+            exportExcelBtn.removeEventListener('click', exportPDCAByDateExcel);
+            exportExcelBtn.addEventListener('click', exportPDCAByDateExcel);
+            console.log('[INIT] Export Excel button listener attached');
+        }
         window.updatePDCACompletion = updatePDCACompletion;
+        window.startEditPDCAEntry = startEditPDCAEntry;
+        window.savePDCAEntry = savePDCAEntry;
+        window.cancelEditPDCAEntry = cancelEditPDCAEntry;
+        window.deletePDCAEntry = deletePDCAEntry;
 
         function loadDateHistory() {
             const allData = cachedResults;
@@ -4044,12 +4464,13 @@
             });
         }
 
-        function parseAuditData(data) {
+        function parseAuditData(data, docId = '') {
             const parsedResponses = safeJsonParse(data.responsesJson, data.responses || []);
             const parsedDiscrepancies = safeJsonParse(data.discrepanciesJson, data.discrepancies || []);
 
             return {
                 ...data,
+                _id: docId,
                 // Parser les JSON strings en tableaux
                 responses: normalizeNestedArrayBySection(parsedResponses),
                 discrepancies: normalizeNestedArrayBySection(parsedDiscrepancies)
@@ -4061,7 +4482,7 @@
                 console.log('Initialisation Firebase...');
                 // Charger les résultats depuis Firestore avec timeout
                 const resultsSnap = await db.collection('results').get();
-                cachedResults = resultsSnap.docs.map(doc => parseAuditData(doc.data()));
+                cachedResults = resultsSnap.docs.map(doc => parseAuditData(doc.data(), doc.id));
                 console.log('Résultats chargés:', cachedResults.length);
                 if (cachedResults.length > 0) {
                     console.log('Premier résultat:', cachedResults[0]);
@@ -4075,7 +4496,7 @@
 
                 // Écouter les changements en temps réel sur les résultats
                 db.collection('results').onSnapshot(snapshot => {
-                    cachedResults = snapshot.docs.map(doc => parseAuditData(doc.data()));
+                    cachedResults = snapshot.docs.map(doc => parseAuditData(doc.data(), doc.id));
                     initDashboard(); // Rafraîchir les graphiques dashboard
                 });
 
