@@ -2524,21 +2524,7 @@
                     return false;
                 }
 
-                if (answers[i] === 'NOK') {
-                    const discrepancy = ensureDiscrepancy(section, i);
-                    const isComplete =
-                        !!discrepancy.photoData &&
-                        (discrepancy.description || '').trim() !== '' &&
-                        (discrepancy.cause || '').trim() !== '' &&
-                        (discrepancy.action || '').trim() !== '' &&
-                        (discrepancy.pilote || '').trim() !== '' &&
-                        (discrepancy.deadline || '').trim() !== '';
-
-                    if (!isComplete) {
-                        alert(`Question ${i + 1} en NOK : veuillez remplir tous les champs Écart (photo, description, cause, action, pilote, deadline).`);
-                        return false;
-                    }
-                }
+                // NOK fields are optional — no validation required
             }
 
             return true;
