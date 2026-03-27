@@ -1457,15 +1457,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script type="module">
-      import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-
-      // Initialize Firebase (si pas déjà initialisé par le SDK compat)
-      const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-      const firestoreDb = getFirestore(app);
-    </script>
 </head>
 <body>
     <div id="loadingOverlay" class="loading-overlay">
